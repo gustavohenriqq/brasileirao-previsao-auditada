@@ -10,8 +10,9 @@ annotation __PBI_TimeIntelligenceEnabled = 0
 
 annotation PBI_ProTooling = ["DevMode"]
 
-annotation PBI_QueryOrder = ["PastaDados","jogos_time","times"]
+annotation PBI_QueryOrder = ["PastaDados","jogos_time","times","jogos_time_b"]
 
 ref table jogos_time
 ref table times
+ref table jogos_time_b
 ref table _Medidas

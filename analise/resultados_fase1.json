@@ -210,6 +210,36 @@
     ],
     "times_com_queda": 17
   },
+  "tradicionais_serie_b": {
+    "Cruzeiro": {
+      "jogos_serie_a_2015_2019": 190,
+      "jogos_serie_b_sem_torcida": 61,
+      "gap_serie_a_2015_2019": 0.6736842105263159,
+      "gap_serie_b_sem_torcida": -0.1993534482758621,
+      "variacao": -0.873037658802178
+    },
+    "Vitoria": {
+      "jogos_serie_a_2015_2019": 114,
+      "jogos_serie_b_sem_torcida": 64,
+      "gap_serie_a_2015_2019": 0.1929824561403508,
+      "gap_serie_b_sem_torcida": 0.49071358748778116,
+      "variacao": 0.29773113134743034
+    },
+    "Figueirense": {
+      "jogos_serie_a_2015_2019": 76,
+      "jogos_serie_b_sem_torcida": 38,
+      "gap_serie_a_2015_2019": 0.8947368421052632,
+      "gap_serie_b_sem_torcida": 0.5789473684210528,
+      "variacao": -0.3157894736842104
+    },
+    "Ponte Preta": {
+      "jogos_serie_a_2015_2019": 114,
+      "jogos_serie_b_sem_torcida": 63,
+      "gap_serie_a_2015_2019": 1.0701754385964912,
+      "gap_serie_b_sem_torcida": 0.9395161290322581,
+      "variacao": -0.1306593095642331
+    }
+  },
   "por_temporada": [
     {
       "temporada": 2003,

@@ -104,8 +104,20 @@ table _Medidas
 		displayFolder: Times
 		lineageTag: 0639f107-196c-5bde-8c17-0e4f8b2a8ba4
 
+	/// Só os tradicionais que jogaram a Série B sem torcida.
+	measure 'Vantagem sem torcida Série B' = CALCULATE ( AVERAGE ( jogos_time_b[pontos] ), jogos_time_b[lado] = "Casa" ) - CALCULATE ( AVERAGE ( jogos_time_b[pontos] ), jogos_time_b[lado] = "Fora" )
+		formatString: 0.00
+		displayFolder: Times
+		lineageTag: 35486e3c-9e02-5253-97a7-afbba8bc78e6
+
+	/// Como Variação sem torcida, mas os tradicionais da Série B usam a B sem torcida. O título e o -45% não usam esta.
+	measure 'Variação na tabela' = VAR a = [Vantagem com torcida 2015-2019] VAR sa = [Vantagem sem torcida] VAR sb = [Vantagem sem torcida Série B] VAR s = IF ( ISBLANK ( sa ), sb, sa ) RETURN IF ( ISBLANK ( a ) || ISBLANK ( s ), BLANK (), s - a )
+		formatString: +0.00;-0.00;0.00
+		displayFolder: Times
+		lineageTag: 2289e75f-c85b-557d-9cd1-f88c8e163c71
+
 	/// Mesma variação, só para desenhar a barra de dados (sem texto) ao lado do número.
-	measure 'Barra da variação' = [Variação sem torcida]
+	measure 'Barra da variação' = [Variação na tabela]
 		formatString: +0.00;-0.00;0.00
 		displayFolder: Times
 		lineageTag: 405503b7-7b88-5c36-a24f-6f1253781212
@@ -126,6 +138,6 @@ table _Medidas
 		lineageTag: 8af8c95f-9e1f-56de-b6b7-6a3625629f6d
 
 	/// Vermelho quando o time perdeu força em casa.
-	measure 'Cor da variação' = IF ( [Variação sem torcida] < 0, "#FF5C7A", "#2EE06E" )
+	measure 'Cor da variação' = IF ( [Variação na tabela] < 0, "#FF5C7A", "#2EE06E" )
 		displayFolder: Cores
 		lineageTag: 94324976-5131-5bc0-9c39-53ccb1dc4396

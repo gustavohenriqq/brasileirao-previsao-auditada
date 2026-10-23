@@ -18,3 +18,7 @@ sources:
         description: "openfootball/brazil, CC0, 2018 em diante, com rodada."
       - name: fdorg_jogos
         description: "football-data.org, plano gratuito, 2023 em diante, com rodada."
+      - name: espn_b_jogos
+        description: "ESPN, Série B (bra.2), 2020 e 2021. Só para os tradicionais que jogaram a Série B sem torcida."
+      - name: openfootball_b_jogos
+        description: "openfootball/brazil, Série B (br2), 2020 e 2021, com rodada. CC0."

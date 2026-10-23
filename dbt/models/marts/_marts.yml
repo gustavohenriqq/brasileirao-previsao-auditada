@@ -141,3 +141,67 @@ models:
     columns:
       - name: periodo
         data_tests: [unique, not_null]
+
+  - name: conferencia_serie_b
+    description: "Série B 2020 e 2021: openfootball (base) contra ESPN, jogo a jogo."
+    data_tests:
+      - combinacao_unica:
+          arguments:
+            colunas: [temporada, mandante_id, visitante_id]
+      - linhas_onde:
+          name: conferencia_serie_b_diverge
+          arguments:
+            condicao: "situacao <> 'confere'"
+          config:
+            severity: warn
+      - linhas_onde:
+          name: conferencia_serie_b_data_mais_de_1_dia
+          arguments:
+            condicao: "diferenca_dias > 1"
+          config:
+            severity: warn
+
+  - name: mando_jogos_serie_b
+    description: "Série B 2020 e 2021, no formato de mando_jogos. Só para os tradicionais que jogaram a B sem torcida."
+    data_tests:
+      - linhas_onde:
+          name: serie_b_publico_no_periodo_sem_torcida
+          description: "Esperado: 20 jogos de jul. a set. de 2021 com público (volta antecipada na Série B). Saem da análise."
+          arguments:
+            condicao: "periodo = 'sem_torcida' and not sem_torcida_de_fato"
+          config:
+            severity: warn
+      - combinacao_unica:
+          arguments:
+            colunas: [temporada, mandante_id, visitante_id]
+    columns:
+      - name: jogo_id
+        data_tests: [unique, not_null]
+      - name: mandante_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('times')
+                field: time_id
+      - name: visitante_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('times')
+                field: time_id
+      - name: gols_mandante
+        data_tests:
+          - not_null
+          - valor_minimo:
+              arguments:
+                minimo: 0
+      - name: gols_visitante
+        data_tests:
+          - not_null
+          - valor_minimo:
+              arguments:
+                minimo: 0
+      - name: periodo
+        data_tests: [not_null]

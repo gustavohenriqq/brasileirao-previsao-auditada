@@ -45,6 +45,11 @@ PAGINAS = {
     "Sao Paulo": "São Paulo Futebol Clube",
     "Sport": "Sport Club do Recife",
     "Vasco": "Club de Regatas Vasco da Gama",
+    # tradicionais que jogaram a Série B sem torcida
+    "Cruzeiro": "Cruzeiro Esporte Clube",
+    "Vitoria": "Esporte Clube Vitória",
+    "Figueirense": "Figueirense Futebol Clube",
+    "Ponte Preta": "Associação Atlética Ponte Preta",
 }
 
 

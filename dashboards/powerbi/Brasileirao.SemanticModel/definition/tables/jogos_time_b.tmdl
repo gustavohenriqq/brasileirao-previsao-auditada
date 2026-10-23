@@ -1,0 +1,95 @@
+/// Série B sem torcida dos clubes tradicionais (Cruzeiro, Vitória, Figueirense, Ponte Preta).
+table jogos_time_b
+	lineageTag: c8b2a57a-1580-5100-9367-6e734740a40c
+
+	column jogo_id
+		dataType: string
+		lineageTag: bf321ae3-f9f5-59fe-8d19-4bb0fec0e18c
+		summarizeBy: none
+		sourceColumn: jogo_id
+
+		annotation SummarizationSetBy = User
+
+	column temporada
+		dataType: int64
+		formatString: 0
+		lineageTag: e45d2207-15b2-51e7-98c0-9ecbec83144d
+		summarizeBy: none
+		sourceColumn: temporada
+
+		annotation SummarizationSetBy = User
+
+	column data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: a5ca0bfb-592f-5186-8c7c-3ed9ce1ec490
+		summarizeBy: none
+		sourceColumn: data
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = User
+
+	column time_id
+		dataType: string
+		lineageTag: 609da660-55d3-5a3c-ad28-0f6bbd2eee15
+		summarizeBy: none
+		sourceColumn: time_id
+
+		annotation SummarizationSetBy = User
+
+	column adversario_id
+		dataType: string
+		lineageTag: 491214ad-7ebe-5a0f-88bf-388969be77bc
+		summarizeBy: none
+		sourceColumn: adversario_id
+
+		annotation SummarizationSetBy = User
+
+	column lado
+		dataType: string
+		lineageTag: f6d302a7-9384-5be2-a527-9921e0d61400
+		summarizeBy: none
+		sourceColumn: lado
+
+		annotation SummarizationSetBy = User
+
+	column gols_pro
+		dataType: int64
+		formatString: 0
+		lineageTag: 631e23fe-3f02-5aba-8584-cab7548ae631
+		summarizeBy: none
+		sourceColumn: gols_pro
+
+		annotation SummarizationSetBy = User
+
+	column gols_contra
+		dataType: int64
+		formatString: 0
+		lineageTag: 002dbc1f-bd59-5228-ae99-80600ad689d1
+		summarizeBy: none
+		sourceColumn: gols_contra
+
+		annotation SummarizationSetBy = User
+
+	column pontos
+		dataType: int64
+		formatString: 0
+		lineageTag: f69478cc-6175-5375-9051-f1c878e6f8b4
+		summarizeBy: none
+		sourceColumn: pontos
+
+		annotation SummarizationSetBy = User
+
+	partition jogos_time_b = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(PastaDados & "jogos_time_b.csv"), [Delimiter = ",", Columns = 9, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalho = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Nulos = Cabecalho,
+				    Tipos = Table.TransformColumnTypes(Nulos, {{"jogo_id", type text}, {"temporada", Int64.Type}, {"data", type date}, {"time_id", type text}, {"adversario_id", type text}, {"lado", type text}, {"gols_pro", Int64.Type}, {"gols_contra", Int64.Type}, {"pontos", Int64.Type}}, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_ResultType = Table

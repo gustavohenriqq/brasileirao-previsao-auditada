@@ -38,11 +38,11 @@
                       "Entity": "times"
                     }
                   },
-                  "Property": "nome"
+                  "Property": "nome_tabela"
                 }
               },
-              "queryRef": "times.nome",
-              "nativeQueryRef": "nome",
+              "queryRef": "times.nome_tabela",
+              "nativeQueryRef": "nome_tabela",
               "displayName": "Time"
             },
             {
@@ -53,11 +53,11 @@
                       "Entity": "_Medidas"
                     }
                   },
-                  "Property": "Variação sem torcida"
+                  "Property": "Variação na tabela"
                 }
               },
-              "queryRef": "_Medidas.Variação sem torcida",
-              "nativeQueryRef": "Variação sem torcida",
+              "queryRef": "_Medidas.Variação na tabela",
+              "nativeQueryRef": "Variação na tabela",
               "displayName": "Variação"
             },
             {
@@ -88,7 +88,7 @@
                     "Entity": "_Medidas"
                   }
                 },
-                "Property": "Variação sem torcida"
+                "Property": "Variação na tabela"
               }
             },
             "direction": "Ascending"
@@ -189,7 +189,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "14D"
+                  "Value": "13D"
                 }
               }
             }
@@ -222,7 +222,7 @@
                 }
               }
             ],
-            "metadata": "_Medidas.Variação sem torcida"
+            "metadata": "_Medidas.Variação na tabela"
           }
         }
       ],
@@ -263,14 +263,14 @@
             "rowPadding": {
               "expr": {
                 "Literal": {
-                  "Value": "1D"
+                  "Value": "0D"
                 }
               }
             },
             "imageHeight": {
               "expr": {
                 "Literal": {
-                  "Value": "22D"
+                  "Value": "19D"
                 }
               }
             }
@@ -283,7 +283,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "40D"
+                  "Value": "36D"
                 }
               }
             }
@@ -297,13 +297,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "165D"
+                  "Value": "170D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "times.nome"
+            "metadata": "times.nome_tabela"
           }
         },
         {
@@ -311,13 +311,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "95D"
+                  "Value": "90D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "_Medidas.Variação sem torcida"
+            "metadata": "_Medidas.Variação na tabela"
           }
         },
         {
@@ -472,7 +472,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Clubes que jogaram com e sem torcida · sem torcida x 2015-2019'"
+                  "Value": "'Sem torcida x 2015-2019 · (B) tradicionais que jogaram a Série B sem torcida'"
                 }
               }
             },

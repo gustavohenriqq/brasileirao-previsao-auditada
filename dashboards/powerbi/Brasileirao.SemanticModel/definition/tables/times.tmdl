@@ -62,14 +62,22 @@ table times
 
 		annotation SummarizationSetBy = User
 
+	column nome_tabela
+		dataType: string
+		lineageTag: ac25e85f-000b-5985-b269-77b896e706b6
+		summarizeBy: none
+		sourceColumn: nome_tabela
+
+		annotation SummarizationSetBy = User
+
 	partition times = m
 		mode: import
 		source =
 				let
-				    Fonte = Csv.Document(File.Contents(PastaDados & "times.csv"), [Delimiter = ",", Columns = 7, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Fonte = Csv.Document(File.Contents(PastaDados & "times.csv"), [Delimiter = ",", Columns = 8, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
 				    Cabecalho = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
 				    Nulos = Cabecalho,
-				    Tipos = Table.TransformColumnTypes(Nulos, {{"time_id", type text}, {"nome", type text}, {"uf", type text}, {"primeira_temporada", Int64.Type}, {"ultima_temporada", Int64.Type}, {"temporadas_na_serie_a", Int64.Type}, {"escudo", type text}}, "en-US")
+				    Tipos = Table.TransformColumnTypes(Nulos, {{"time_id", type text}, {"nome", type text}, {"uf", type text}, {"primeira_temporada", Int64.Type}, {"ultima_temporada", Int64.Type}, {"temporadas_na_serie_a", Int64.Type}, {"escudo", type text}, {"nome_tabela", type text}}, "en-US")
 				in
 				    Tipos
 

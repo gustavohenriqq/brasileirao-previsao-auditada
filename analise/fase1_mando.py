@@ -201,6 +201,40 @@ def mesmo_time(d, rng) -> dict:
     }
 
 
+TRADICIONAIS_B = ("Cruzeiro", "Vitoria", "Figueirense", "Ponte Preta")
+
+
+def tradicionais_serie_b(d) -> dict:
+    """Clubes tradicionais (9+ temporadas na Série A desde 2003, na Série A em
+    2015-2019) que jogaram a Série B sem torcida. Cada um contra ele mesmo:
+    pontos/jogo em casa menos fora na Série A 2015-2019 x na Série B sem
+    torcida (período sem torcida e público zero na ESPN). Muda a divisão junto
+    com a torcida, então fica fora dos números principais."""
+    recente = (d["periodo"] == "com_torcida_antes") & (d["temporada"] >= 2015)
+    with conectar() as con, con.cursor() as cur:
+        cur.execute("""
+            select mandante_id, visitante_id, pontos_mandante, pontos_visitante
+            from marts.mando_jogos_serie_b where sem_torcida_de_fato
+        """)
+        b = cur.fetchall()
+    saida = {}
+    for time in TRADICIONAIS_B:
+        casa_a = d["pm"][recente & (d["mandante"] == time)]
+        fora_a = d["pv"][recente & (d["visitante"] == time)]
+        casa_b = [pm for m, v, pm, pv in b if m == time]
+        fora_b = [pv for m, v, pm, pv in b if v == time]
+        gap_a = float(np.mean(casa_a) - np.mean(fora_a))
+        gap_b = float(np.mean(casa_b) - np.mean(fora_b))
+        saida[time] = {
+            "jogos_serie_a_2015_2019": int(len(casa_a) + len(fora_a)),
+            "jogos_serie_b_sem_torcida": len(casa_b) + len(fora_b),
+            "gap_serie_a_2015_2019": gap_a,
+            "gap_serie_b_sem_torcida": gap_b,
+            "variacao": gap_b - gap_a,
+        }
+    return saida
+
+
 def por_temporada(d, rng) -> list[dict]:
     """Uma linha por temporada; 2021 dividido entre sem torcida e volta parcial."""
     v = (d["pm"] - d["pv"]).astype(float)
@@ -334,6 +368,7 @@ def main() -> None:
         },
         "contra_tendencia": contra_tendencia(d, rng),
         "mesmo_time": mesmo_time(d, rng),
+        "tradicionais_serie_b": tradicionais_serie_b(d),
         "por_temporada": por_temporada(d, rng),
     }
 

@@ -65,6 +65,34 @@ para 0,27 gol por jogo (queda de 0,23; intervalo de 0,10 a 0,37).
   Arbitragem (cartões e pênaltis por mando) é uma pergunta natural para depois;
   a base adaoduque tem cartões por jogo.
 
+## Os tradicionais que jogaram a Série B sem torcida
+
+O recorte "cada time contra ele mesmo" pega os 21 clubes que jogaram a Série A
+em 2015-2019 e no período sem torcida (2020 e 2021 somam 24 clubes; Bragantino,
+Cuiabá e Juventude não jogaram a Série A em 2015-2019). Ficavam de fora clubes
+tradicionais que caíram. Critério: 9 ou mais temporadas na Série A desde 2003 e
+Série A em 2015-2019. Entram 4, comparados entre a Série A com torcida e a
+Série B sem torcida.
+
+| Clube | Série A 2015-2019 | Série B sem torcida | Variação |
+|---|---|---|---|
+| Cruzeiro | +0,67 (190 jogos) | -0,20 (61 jogos) | -0,87 |
+| Figueirense | +0,89 (76) | +0,58 (38) | -0,32 |
+| Ponte Preta | +1,07 (114) | +0,94 (63) | -0,13 |
+| Vitória | +0,19 (114) | +0,49 (64) | +0,30 |
+
+Três dos quatro perderam força em casa. **Ficam fora dos números principais**
+(o 0,44, o -45% e o 17 de 21), porque aqui muda a divisão junto com a torcida.
+
+- **Fontes da Série B:** ESPN (liga bra.2) e openfootball (br2), 2020 e 2021.
+  As duas bateram nos 760 jogos (placar e data), em `marts.conferencia_serie_b`.
+- **Na Série B o público voltou antes**, em algumas praças: Goiás em julho de
+  2021, Cruzeiro no Mineirão em agosto e várias em setembro. Por isso, na Série
+  B, "sem torcida" é o período sem torcida **e** público zero na ESPN. Saem 20
+  jogos de julho a setembro de 2021 (teste em aviso
+  `serie_b_publico_no_periodo_sem_torcida`).
+- Números em `analise/resultados_fase1.json`, bloco `tradicionais_serie_b`.
+
 ## Como o período sem torcida foi definido
 
 Pela data, em `dbt/seeds/periodos_torcida.csv`:

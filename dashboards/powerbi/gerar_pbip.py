@@ -72,6 +72,18 @@ COLUNAS_TIMES = [
     ("ultima_temporada", "int64", "Int64.Type", "0", None),
     ("temporadas_na_serie_a", "int64", "Int64.Type", "0", None),
     ("escudo", "string", "type text", None, None),
+    ("nome_tabela", "string", "type text", None, None),
+]
+COLUNAS_JOGOS_B = [
+    ("jogo_id", "string", "type text", None, None),
+    ("temporada", "int64", "Int64.Type", "0", None),
+    ("data", "dateTime", "type date", "dd/mm/yyyy", None),
+    ("time_id", "string", "type text", None, None),
+    ("adversario_id", "string", "type text", None, None),
+    ("lado", "string", "type text", None, None),
+    ("gols_pro", "int64", "Int64.Type", "0", None),
+    ("gols_contra", "int64", "Int64.Type", "0", None),
+    ("pontos", "int64", "Int64.Type", "0", None),
 ]
 # Colunas e medidas que o Power BI deve desenhar como imagem
 IMAGENS = {"escudo"}
@@ -138,7 +150,17 @@ MEDIDAS = [
     ("Times comparados",
      "COUNTROWS ( FILTER ( VALUES ( times[time_id] ), NOT ISBLANK ( [Variação sem torcida] ) ) )",
      "0", "Times", "Times que jogaram nos dois períodos."),
-    ("Barra da variação", "[Variação sem torcida]", "+0.00;-0.00;0.00", "Times",
+    ("Vantagem sem torcida Série B",
+     'CALCULATE ( AVERAGE ( jogos_time_b[pontos] ), jogos_time_b[lado] = "Casa" ) '
+     '- CALCULATE ( AVERAGE ( jogos_time_b[pontos] ), jogos_time_b[lado] = "Fora" )',
+     "0.00", "Times", "Só os tradicionais que jogaram a Série B sem torcida."),
+    ("Variação na tabela",
+     "VAR a = [Vantagem com torcida 2015-2019] VAR sa = [Vantagem sem torcida] "
+     "VAR sb = [Vantagem sem torcida Série B] VAR s = IF ( ISBLANK ( sa ), sb, sa ) "
+     "RETURN IF ( ISBLANK ( a ) || ISBLANK ( s ), BLANK (), s - a )",
+     "+0.00;-0.00;0.00", "Times",
+     "Como Variação sem torcida, mas os tradicionais da Série B usam a B sem torcida. O título e o -45% não usam esta."),
+    ("Barra da variação", "[Variação na tabela]", "+0.00;-0.00;0.00", "Times",
      "Mesma variação, só para desenhar a barra de dados (sem texto) ao lado do número."),
     ("Título dos times",
      'FORMAT ( [Times que caíram], "0" ) & " de " & FORMAT ( [Times comparados], "0" ) '
@@ -150,7 +172,7 @@ MEDIDAS = [
     ("Cor do período",
      f'IF ( SELECTEDVALUE ( jogos_time[periodo_painel_ordem] ) = 2, "{LIMAO}", "{VIOLETA}" )',
      None, "Cores", "Limão no período sem torcida."),
-    ("Cor da variação", f'IF ( [Variação sem torcida] < 0, "{QUEDA}", "{ALTA}" )',
+    ("Cor da variação", f'IF ( [Variação na tabela] < 0, "{QUEDA}", "{ALTA}" )',
      None, "Cores", "Vermelho quando o time perdeu força em casa."),
 ]
 
@@ -232,10 +254,11 @@ annotation __PBI_TimeIntelligenceEnabled = 0
 
 annotation PBI_ProTooling = ["DevMode"]
 
-annotation PBI_QueryOrder = ["PastaDados","jogos_time","times"]
+annotation PBI_QueryOrder = ["PastaDados","jogos_time","times","jogos_time_b"]
 
 ref table jogos_time
 ref table times
+ref table jogos_time_b
 ref table _Medidas
 """, encoding="utf-8")
     pasta_dados = str(PASTA / "dados") + "\\"
@@ -246,12 +269,18 @@ ref table _Medidas
         encoding="utf-8")
     (d / "relationships.tmdl").write_text(
         f"relationship {tag('relacao', 'jogos_time', 'times')}\n"
-        "\tfromColumn: jogos_time.time_id\n\ttoColumn: times.time_id\n", encoding="utf-8")
+        "\tfromColumn: jogos_time.time_id\n\ttoColumn: times.time_id\n\n"
+        f"relationship {tag('relacao', 'jogos_time_b', 'times')}\n"
+        "\tfromColumn: jogos_time_b.time_id\n\ttoColumn: times.time_id\n", encoding="utf-8")
     (d / "tables" / "jogos_time.tmdl").write_text(tmdl_tabela_csv(
         "jogos_time", "jogos_time.csv", COLUNAS_JOGOS, ["periodo_painel", "periodo_painel_ordem"],
         "Um time em um jogo: cada jogo tem duas linhas (Casa e Fora)."), encoding="utf-8")
     (d / "tables" / "times.tmdl").write_text(tmdl_tabela_csv(
         "times", "times.csv", COLUNAS_TIMES, [], "Clubes da Série A de 2003 a 2025."), encoding="utf-8")
+    (d / "tables" / "jogos_time_b.tmdl").write_text(tmdl_tabela_csv(
+        "jogos_time_b", "jogos_time_b.csv", COLUNAS_JOGOS_B, [],
+        "Série B sem torcida dos clubes tradicionais (Cruzeiro, Vitória, Figueirense, Ponte Preta)."),
+        encoding="utf-8")
     (d / "tables" / "_Medidas.tmdl").write_text(tmdl_medidas(), encoding="utf-8")
 
 
@@ -484,27 +513,27 @@ def pagina_principal() -> Pagina:
         "query": {
             "queryState": {"Values": {"projections": [
                 proj_coluna("times", "escudo", " "),
-                proj_coluna("times", "nome", "Time"),
-                proj_medida("Variação sem torcida", "Variação"),
+                proj_coluna("times", "nome_tabela", "Time"),
+                proj_medida("Variação na tabela", "Variação"),
                 proj_medida("Barra da variação", "caiu  ◀ │ ▶  subiu"),
             ]}},
-            "sortDefinition": {"sort": [{"field": medida_ref("Variação sem torcida"), "direction": "Ascending"}]},
+            "sortDefinition": {"sort": [{"field": medida_ref("Variação na tabela"), "direction": "Ascending"}]},
         },
         "objects": {
             "columnHeaders": props(fontColor=cor(LIMAO), backColor=cor(PAINEL2), fontSize=num(14), bold=L("true")),
             "values": [
                 {"properties": {"fontColorPrimary": cor(BRANCO), "backColorPrimary": cor(PAINEL),
                                 "fontColorSecondary": cor(BRANCO), "backColorSecondary": cor("#181C45"),
-                                "fontSize": num(14)}},
+                                "fontSize": num(13)}},
                 {"properties": {"fontColor": cor_medida("Cor da variação")},
                  "selector": {"data": [{"dataViewWildcard": {"matchingOption": 1}}],
-                              "metadata": "_Medidas.Variação sem torcida"}},
+                              "metadata": "_Medidas.Variação na tabela"}},
             ],
             "total": props(totals=L("false")),
-            "grid": props(gridHorizontal=L("true"), gridHorizontalColor=cor(BORDA), rowPadding=num(1),
-                          imageHeight=num(22)),
-            "columnWidth": [largura("times.escudo", 40), largura("times.nome", 165),
-                            largura("_Medidas.Variação sem torcida", 95),
+            "grid": props(gridHorizontal=L("true"), gridHorizontalColor=cor(BORDA), rowPadding=num(0),
+                          imageHeight=num(19)),
+            "columnWidth": [largura("times.escudo", 36), largura("times.nome_tabela", 170),
+                            largura("_Medidas.Variação na tabela", 90),
                             largura("_Medidas.Barra da variação", 240)],
             # Barra de dados nativa: zero no meio, vermelho à esquerda (caiu), verde à direita (subiu)
             "columnFormatting": [{
@@ -512,7 +541,7 @@ def pagina_principal() -> Pagina:
                     "positiveColor": cor(ALTA), "negativeColor": cor(QUEDA), "axisColor": cor(BRANCO),
                     "reverseDirection": L("false"), "hideText": L("true"), "totalMatchingOption": L("1L")}},
                 "selector": {"metadata": "_Medidas.Barra da variação"}}],
-        }}, {**cabecalho("x", "Clubes que jogaram com e sem torcida · sem torcida x 2015-2019"),
+        }}, {**cabecalho("x", "Sem torcida x 2015-2019 · (B) tradicionais que jogaram a Série B sem torcida"),
              "title": props(show=L("true"), text=titulo_times, fontColor=cor(BRANCO), fontSize=num(22),
                             bold=L("true"), titleWrap=L("true"))})
 

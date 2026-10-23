@@ -58,7 +58,26 @@ from j
 order by temporada, data, jogo_id, lado
 """
 
-TIMES = "select time_id, nome, uf, primeira_temporada, ultima_temporada, temporadas_na_serie_a from marts.dim_times order by nome"
+TIMES = """select time_id, nome, uf, primeira_temporada, ultima_temporada, temporadas_na_serie_a
+from marts.dim_times where temporadas_na_serie_a > 0 order by nome"""
+
+# Clubes tradicionais (9+ temporadas na Série A desde 2003, na Série A em
+# 2015-2019) que jogaram a Série B no período sem torcida. Entram na tabela do
+# painel marcados com "(B)"; os números principais seguem só com a Série A.
+TRADICIONAIS_B = ("Cruzeiro", "Vitoria", "Figueirense", "Ponte Preta")
+
+JOGOS_TIME_B = f"""
+select jogo_id, temporada, data, mandante_id as time_id, visitante_id as adversario_id, 'Casa' as lado,
+       gols_mandante as gols_pro, gols_visitante as gols_contra, pontos_mandante as pontos
+from marts.mando_jogos_serie_b
+where sem_torcida_de_fato and mandante_id in {TRADICIONAIS_B}
+union all
+select jogo_id, temporada, data, visitante_id, mandante_id, 'Fora',
+       gols_visitante, gols_mandante, pontos_visitante
+from marts.mando_jogos_serie_b
+where sem_torcida_de_fato and visitante_id in {TRADICIONAIS_B}
+order by temporada, data, jogo_id, lado
+"""
 
 
 def exportar(cur, consulta: str, arquivo: str) -> int:
@@ -89,6 +108,7 @@ def anexar_escudos(arquivo: Path) -> int:
         linhas = list(csv.DictReader(f))
     n = 0
     for linha in linhas:
+        linha["nome_tabela"] = linha["nome"] + (" (B)" if linha["time_id"] in TRADICIONAIS_B else "")
         png = pasta / f"{linha['time_id']}.png"
         linha["escudo"] = ""
         if png.exists():
@@ -116,8 +136,9 @@ def main() -> None:
         if n != 2 * jogos:
             raise SystemExit(f"jogos_time tem {n} linhas; esperado 2 x {jogos}")
         t = exportar(cur, TIMES, "times.csv")
+        b = exportar(cur, JOGOS_TIME_B, "jogos_time_b.csv")
     escudos = anexar_escudos(PASTA / "times.csv")
-    print(f"jogos_time.csv: {n} linhas (2 por jogo, {jogos} jogos); times.csv: {t} times, {escudos} com escudo")
+    print(f"jogos_time.csv: {n} linhas (2 por jogo, {jogos} jogos); times.csv: {t} times, {escudos} com escudo; jogos_time_b.csv: {b} linhas")
 
 
 if __name__ == "__main__":

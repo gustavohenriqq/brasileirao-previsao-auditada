@@ -118,16 +118,19 @@ ESPN_COLS = [
 ]
 
 
-def espn() -> tuple[list[str], list[dict]]:
-    pasta = BRUTOS / "espn"
+def espn(liga: str = "bra.1", pasta_nome: str = "espn", anos: range | None = None,
+         temporadas: range = TEMPORADAS) -> tuple[list[str], list[dict]]:
+    pasta = BRUTOS / pasta_nome
+    url = ESPN.replace("bra.1", liga)
     linhas: list[dict] = []
     vistos: set[str] = set()
-    for ano in range(2006, max(TEMPORADAS) + 2):  # +1 ano civil: 2020 terminou em 2021
-        arq = baixar(f"{ESPN}?dates={ano}&limit=1000", pasta / f"{ano}.json", pausa=0.5)
+    anos = anos or range(2006, max(TEMPORADAS) + 2)  # +1 ano civil: 2020 terminou em 2021
+    for ano in anos:
+        arq = baixar(f"{url}?dates={ano}&limit=1000", pasta / f"{ano}.json", pausa=0.5)
         hash_ = sha256(arq)
         for e in json.loads(arq.read_text(encoding="utf-8")).get("events", []):
             temporada = e.get("season", {}).get("year")
-            if temporada not in TEMPORADAS or e["id"] in vistos:
+            if temporada not in temporadas or e["id"] in vistos:
                 continue
             vistos.add(e["id"])
             c = e["competitions"][0]
@@ -209,15 +212,32 @@ def parse_openfootball(texto: str, temporada: int) -> list[dict]:
     return jogos
 
 
-def openfootball() -> tuple[list[str], list[dict]]:
+def openfootball(divisao: str = "br1", pasta_nome: str = "openfootball",
+                 temporadas: range | None = None) -> tuple[list[str], list[dict]]:
     linhas: list[dict] = []
-    for temporada in range(2018, max(TEMPORADAS) + 1):
-        nome = f"{temporada}_br1.txt"
-        arq = baixar(f"{OPENFOOTBALL}/{nome}", BRUTOS / "openfootball" / nome)
+    for temporada in temporadas or range(2018, max(TEMPORADAS) + 1):
+        nome = f"{temporada}_{divisao}.txt"
+        arq = baixar(f"{OPENFOOTBALL}/{nome}", BRUTOS / pasta_nome / nome)
         hash_ = sha256(arq)
         for j in parse_openfootball(arq.read_text(encoding="utf-8"), temporada):
             linhas.append({**j, "_arquivo": nome, "_sha256": hash_})
     return OPENFOOTBALL_COLS, linhas
+
+
+# ---------------------------------------------------------------------------
+# Série B de 2020 e 2021, só para os clubes tradicionais que jogaram a
+# segunda divisão no período sem torcida (Cruzeiro, Vitória, Figueirense e
+# Ponte Preta). Mesmas duas fontes, para uma conferir a outra.
+# ---------------------------------------------------------------------------
+SERIE_B_TEMPORADAS = range(2020, 2022)
+
+
+def espn_b() -> tuple[list[str], list[dict]]:
+    return espn("bra.2", "espn_b", range(2020, 2022), SERIE_B_TEMPORADAS)
+
+
+def openfootball_b() -> tuple[list[str], list[dict]]:
+    return openfootball("br2", "openfootball_b", SERIE_B_TEMPORADAS)
 
 
 # ---------------------------------------------------------------------------
@@ -265,4 +285,6 @@ FONTES = {
     "espn": espn,
     "openfootball": openfootball,
     "fdorg": fdorg,
+    "espn_b": espn_b,
+    "openfootball_b": openfootball_b,
 }
