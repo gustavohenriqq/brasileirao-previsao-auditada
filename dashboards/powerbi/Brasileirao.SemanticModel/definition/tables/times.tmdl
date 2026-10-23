@@ -1,0 +1,76 @@
+/// Clubes da Série A de 2003 a 2025.
+table times
+	lineageTag: 238178f9-632b-51ea-9b0c-1b49a0b5b5ee
+
+	column time_id
+		dataType: string
+		lineageTag: 2982d1a4-db51-5b1e-aa20-94f7d4be0102
+		summarizeBy: none
+		sourceColumn: time_id
+
+		annotation SummarizationSetBy = User
+
+	column nome
+		dataType: string
+		lineageTag: 1a0cb3c5-2267-58df-9426-962ddfae9923
+		summarizeBy: none
+		sourceColumn: nome
+
+		annotation SummarizationSetBy = User
+
+	column uf
+		dataType: string
+		lineageTag: 461f4f03-375a-5be9-93d8-de4b1b538b21
+		summarizeBy: none
+		sourceColumn: uf
+
+		annotation SummarizationSetBy = User
+
+	column primeira_temporada
+		dataType: int64
+		formatString: 0
+		lineageTag: bf85a997-d0f3-5fd9-a4a3-c14ceccf1fe3
+		summarizeBy: none
+		sourceColumn: primeira_temporada
+
+		annotation SummarizationSetBy = User
+
+	column ultima_temporada
+		dataType: int64
+		formatString: 0
+		lineageTag: 5b70d909-e838-5291-a981-715aa38f4738
+		summarizeBy: none
+		sourceColumn: ultima_temporada
+
+		annotation SummarizationSetBy = User
+
+	column temporadas_na_serie_a
+		dataType: int64
+		formatString: 0
+		lineageTag: 648c9de4-ce5c-5ab8-b613-d310f0a84bc3
+		summarizeBy: none
+		sourceColumn: temporadas_na_serie_a
+
+		annotation SummarizationSetBy = User
+
+	column escudo
+		dataType: string
+		lineageTag: 622f38c4-2030-581e-8d83-6e1fdee15472
+		summarizeBy: none
+		sourceColumn: escudo
+		dataCategory: ImageUrl
+
+		annotation SummarizationSetBy = User
+
+	partition times = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(PastaDados & "times.csv"), [Delimiter = ",", Columns = 7, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalho = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Nulos = Cabecalho,
+				    Tipos = Table.TransformColumnTypes(Nulos, {{"time_id", type text}, {"nome", type text}, {"uf", type text}, {"primeira_temporada", Int64.Type}, {"ultima_temporada", Int64.Type}, {"temporadas_na_serie_a", Int64.Type}, {"escudo", type text}}, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_ResultType = Table

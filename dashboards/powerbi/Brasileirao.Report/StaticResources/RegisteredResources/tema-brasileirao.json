@@ -1,0 +1,113 @@
+{
+  "name": "Brasileirao",
+  "dataColors": [
+    "#5D4DFF",
+    "#C6F500",
+    "#8A8FB8",
+    "#3A3F86",
+    "#2EE06E",
+    "#FF5C7A"
+  ],
+  "foreground": "#FFFFFF",
+  "foregroundNeutralSecondary": "#8A8FB8",
+  "background": "#0B0D26",
+  "tableAccent": "#C6F500",
+  "good": "#2EE06E",
+  "bad": "#FF5C7A",
+  "neutral": "#8A8FB8",
+  "textClasses": {
+    "callout": {
+      "fontSize": 44,
+      "fontFace": "Segoe UI Black",
+      "color": "#FFFFFF"
+    },
+    "title": {
+      "fontSize": 22,
+      "fontFace": "Segoe UI Bold",
+      "color": "#FFFFFF"
+    },
+    "header": {
+      "fontSize": 16,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#FFFFFF"
+    },
+    "label": {
+      "fontSize": 15,
+      "fontFace": "Segoe UI",
+      "color": "#D5D8F0"
+    }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#14173A"
+              }
+            },
+            "transparency": 6
+          }
+        ],
+        "border": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#2A2E66"
+              }
+            },
+            "radius": 16,
+            "width": 1
+          }
+        ],
+        "dropShadow": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#000000"
+              }
+            },
+            "position": "Outer",
+            "preset": "Custom",
+            "angle": 90,
+            "shadowDistance": 4,
+            "shadowBlur": 18,
+            "shadowSpread": 0,
+            "transparency": 45
+          }
+        ],
+        "padding": [
+          {
+            "left": 18,
+            "top": 14,
+            "right": 18,
+            "bottom": 14
+          }
+        ],
+        "visualTooltip": [
+          {
+            "background": {
+              "solid": {
+                "color": "#1C2050"
+              }
+            },
+            "titleFontColor": {
+              "solid": {
+                "color": "#C6F500"
+              }
+            },
+            "valueFontColor": {
+              "solid": {
+                "color": "#FFFFFF"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

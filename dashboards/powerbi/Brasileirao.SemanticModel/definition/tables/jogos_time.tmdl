@@ -1,0 +1,174 @@
+/// Um time em um jogo: cada jogo tem duas linhas (Casa e Fora).
+table jogos_time
+	lineageTag: 689dda07-4ff4-53b3-9871-dcba5cfcf34a
+
+	column jogo_id
+		dataType: string
+		lineageTag: 91f4c912-742a-5a48-b3de-79dbe4f0b768
+		summarizeBy: none
+		sourceColumn: jogo_id
+
+		annotation SummarizationSetBy = User
+
+	column temporada
+		dataType: int64
+		formatString: 0
+		lineageTag: 6068bb93-28f3-5ea2-9226-b105aadcc481
+		summarizeBy: none
+		sourceColumn: temporada
+
+		annotation SummarizationSetBy = User
+
+	column rodada
+		dataType: int64
+		formatString: 0
+		lineageTag: 982a41c1-e3d8-5933-916f-82535fd49389
+		summarizeBy: none
+		sourceColumn: rodada
+
+		annotation SummarizationSetBy = User
+
+	column data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 979d48f5-d093-57b5-8694-aaf030fc2e26
+		summarizeBy: none
+		sourceColumn: data
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = User
+
+	column periodo
+		dataType: string
+		lineageTag: d5cda799-676f-55be-b802-591252f0063c
+		summarizeBy: none
+		sourceColumn: periodo
+
+		annotation SummarizationSetBy = User
+
+	column periodo_painel
+		dataType: string
+		lineageTag: e94eae50-2bbc-5cc5-9b06-291fa5b8b491
+		summarizeBy: none
+		sourceColumn: periodo_painel
+		sortByColumn: periodo_painel_ordem
+
+		annotation SummarizationSetBy = User
+
+	column periodo_painel_ordem
+		dataType: int64
+		formatString: 0
+		lineageTag: 052b4ddd-3551-5013-b712-0e6ab9f0fb19
+		summarizeBy: none
+		sourceColumn: periodo_painel_ordem
+
+		annotation SummarizationSetBy = User
+
+	column bloco
+		dataType: string
+		lineageTag: c92dd2c2-78a2-524d-97e1-758b1155bf05
+		summarizeBy: none
+		sourceColumn: bloco
+		sortByColumn: bloco_ordem
+
+		annotation SummarizationSetBy = User
+
+	column bloco_ordem
+		dataType: int64
+		formatString: 0
+		lineageTag: 9071b801-c72e-5f9b-9ccb-ef9ff8aebe58
+		summarizeBy: none
+		sourceColumn: bloco_ordem
+
+		annotation SummarizationSetBy = User
+
+	column bloco_tipo
+		dataType: string
+		lineageTag: 93a13971-7c71-513d-b4d5-923eb7c457a1
+		summarizeBy: none
+		sourceColumn: bloco_tipo
+
+		annotation SummarizationSetBy = User
+
+	column resultado_jogo
+		dataType: string
+		lineageTag: a9ab7de6-613c-583d-865e-f8cd6be28bcc
+		summarizeBy: none
+		sourceColumn: resultado_jogo
+		sortByColumn: resultado_ordem
+
+		annotation SummarizationSetBy = User
+
+	column resultado_ordem
+		dataType: int64
+		formatString: 0
+		lineageTag: 8e3996b5-0cf7-5843-8d0e-1e4f536aefc7
+		summarizeBy: none
+		sourceColumn: resultado_ordem
+
+		annotation SummarizationSetBy = User
+
+	column time_id
+		dataType: string
+		lineageTag: 55e62f7d-581b-5387-b654-94c4e942481a
+		summarizeBy: none
+		sourceColumn: time_id
+
+		annotation SummarizationSetBy = User
+
+	column adversario_id
+		dataType: string
+		lineageTag: 882afd52-e47b-529a-944e-3e0eee1c978c
+		summarizeBy: none
+		sourceColumn: adversario_id
+
+		annotation SummarizationSetBy = User
+
+	column lado
+		dataType: string
+		lineageTag: 03de75fc-ab7f-593a-8f99-ea5e4ad08755
+		summarizeBy: none
+		sourceColumn: lado
+
+		annotation SummarizationSetBy = User
+
+	column gols_pro
+		dataType: int64
+		formatString: 0
+		lineageTag: fd2f2057-b3b5-5ab8-94a5-7a05325b782d
+		summarizeBy: none
+		sourceColumn: gols_pro
+
+		annotation SummarizationSetBy = User
+
+	column gols_contra
+		dataType: int64
+		formatString: 0
+		lineageTag: 9231e833-2ef6-5aab-a947-322adf035de9
+		summarizeBy: none
+		sourceColumn: gols_contra
+
+		annotation SummarizationSetBy = User
+
+	column pontos
+		dataType: int64
+		formatString: 0
+		lineageTag: c89ee465-eff6-550b-af67-cbccc9598843
+		summarizeBy: none
+		sourceColumn: pontos
+
+		annotation SummarizationSetBy = User
+
+	partition jogos_time = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(PastaDados & "jogos_time.csv"), [Delimiter = ",", Columns = 18, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalho = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Nulos = Table.ReplaceValue(Cabecalho, "", null, Replacer.ReplaceValue, {"periodo_painel", "periodo_painel_ordem"}),
+				    Tipos = Table.TransformColumnTypes(Nulos, {{"jogo_id", type text}, {"temporada", Int64.Type}, {"rodada", Int64.Type}, {"data", type date}, {"periodo", type text}, {"periodo_painel", type text}, {"periodo_painel_ordem", Int64.Type}, {"bloco", type text}, {"bloco_ordem", Int64.Type}, {"bloco_tipo", type text}, {"resultado_jogo", type text}, {"resultado_ordem", Int64.Type}, {"time_id", type text}, {"adversario_id", type text}, {"lado", type text}, {"gols_pro", Int64.Type}, {"gols_contra", Int64.Type}, {"pontos", Int64.Type}}, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_ResultType = Table

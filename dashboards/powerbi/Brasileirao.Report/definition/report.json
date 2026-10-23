@@ -1,0 +1,125 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/3.3.0/schema.json",
+  "themeCollection": {
+    "baseTheme": {
+      "name": "Fluent2-CY26SU09",
+      "reportVersionAtImport": {
+        "visual": "2.13.0",
+        "report": "3.4.0",
+        "page": "2.3.1"
+      },
+      "type": "SharedResources"
+    },
+    "customTheme": {
+      "name": "tema-brasileirao.json",
+      "reportVersionAtImport": {
+        "visual": "2.13.0",
+        "report": "3.4.0",
+        "page": "2.3.1"
+      },
+      "type": "RegisteredResources"
+    }
+  },
+  "objects": {
+    "outspacePane": [
+      {
+        "properties": {
+          "expanded": {
+            "expr": {
+              "Literal": {
+                "Value": "false"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "resourcePackages": [
+    {
+      "name": "SharedResources",
+      "type": "SharedResources",
+      "items": [
+        {
+          "name": "Fluent2-CY26SU09",
+          "path": "BaseThemes/Fluent2-CY26SU09.json",
+          "type": "BaseTheme"
+        }
+      ]
+    },
+    {
+      "name": "RegisteredResources",
+      "type": "RegisteredResources",
+      "items": [
+        {
+          "name": "tema-brasileirao.json",
+          "path": "tema-brasileirao.json",
+          "type": "CustomTheme"
+        },
+        {
+          "name": "adesivo_sem_torcida.png",
+          "path": "adesivo_sem_torcida.png",
+          "type": "Image"
+        },
+        {
+          "name": "fundo.png",
+          "path": "fundo.png",
+          "type": "Image"
+        },
+        {
+          "name": "icone_casa.png",
+          "path": "icone_casa.png",
+          "type": "Image"
+        },
+        {
+          "name": "icone_fora.png",
+          "path": "icone_fora.png",
+          "type": "Image"
+        },
+        {
+          "name": "icone_gols.png",
+          "path": "icone_gols.png",
+          "type": "Image"
+        },
+        {
+          "name": "icone_jogos.png",
+          "path": "icone_jogos.png",
+          "type": "Image"
+        },
+        {
+          "name": "icone_sem_torcida.png",
+          "path": "icone_sem_torcida.png",
+          "type": "Image"
+        },
+        {
+          "name": "icone_vitorias.png",
+          "path": "icone_vitorias.png",
+          "type": "Image"
+        },
+        {
+          "name": "logo_brasileirao.png",
+          "path": "logo_brasileirao.png",
+          "type": "Image"
+        },
+        {
+          "name": "titulo.png",
+          "path": "titulo.png",
+          "type": "Image"
+        },
+        {
+          "name": "titulo_texto.png",
+          "path": "titulo_texto.png",
+          "type": "Image"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "useStylableVisualContainerHeader": true,
+    "exportDataMode": "AllowSummarized",
+    "defaultDrillFilterOtherVisuals": true,
+    "allowChangeFilterTypes": true,
+    "useEnhancedTooltips": true,
+    "useDefaultAggregateDisplayName": true
+  }
+}

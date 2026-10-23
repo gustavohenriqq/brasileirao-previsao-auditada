@@ -1,0 +1,3 @@
+relationship a0c02ffa-6529-53b7-a615-bd1849a00478
+	fromColumn: jogos_time.time_id
+	toColumn: times.time_id

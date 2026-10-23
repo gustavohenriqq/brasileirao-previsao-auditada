@@ -1,0 +1,131 @@
+/// Só medidas. Todo número do painel sai daqui.
+table _Medidas
+	lineageTag: 0be6f27c-3975-5e7d-95e4-f8e502dd7f7a
+
+	/// Jogos distintos no filtro.
+	measure Jogos = DISTINCTCOUNT ( jogos_time[jogo_id] )
+		formatString: #,0
+		displayFolder: KPI
+		lineageTag: 7193c95c-0d10-5783-9f99-7c8be5c9d80c
+
+	/// Média de gols por jogo (as duas linhas do jogo têm o mesmo total).
+	measure 'Gols por jogo' = AVERAGEX ( jogos_time, jogos_time[gols_pro] + jogos_time[gols_contra] )
+		formatString: 0.00
+		displayFolder: KPI
+		lineageTag: 3ed955a0-cb64-5702-9c16-6b778f466ba5
+
+	/// Vitórias em casa sobre jogos em casa.
+	measure 'Vitórias do mandante' = DIVIDE ( CALCULATE ( COUNTROWS ( jogos_time ), jogos_time[lado] = "Casa", jogos_time[pontos] = 3 ), CALCULATE ( COUNTROWS ( jogos_time ), jogos_time[lado] = "Casa" ) )
+		formatString: 0.0%
+		displayFolder: KPI
+		lineageTag: 9c655a3a-13fb-5f8c-ba52-035789860cdd
+
+	/// Média de pontos por jogo como mandante.
+	measure 'Pontos por jogo em casa' = CALCULATE ( AVERAGE ( jogos_time[pontos] ), jogos_time[lado] = "Casa" )
+		formatString: 0.00
+		displayFolder: KPI
+		lineageTag: 5426d927-55fb-5b73-b39b-0c46e66e5a8a
+
+	/// Média de pontos por jogo como visitante.
+	measure 'Pontos por jogo fora' = CALCULATE ( AVERAGE ( jogos_time[pontos] ), jogos_time[lado] = "Fora" )
+		formatString: 0.00
+		displayFolder: KPI
+		lineageTag: 2062b1e4-9cb1-5289-aae5-7a51f97ec6f3
+
+	/// Pontos por jogo em casa menos fora. Sem filtro de time, é a média de (pontos do mandante - pontos do visitante) por jogo.
+	measure 'Vantagem do mandante' = [Pontos por jogo em casa] - [Pontos por jogo fora]
+		formatString: 0.00
+		displayFolder: Mando
+		lineageTag: e53de99e-88e6-5203-a1e8-ef8e7804e7f6
+
+	/// Referência: mesma época, com público. Ignora o filtro de temporada.
+	measure 'Vantagem com torcida 2015-2019' = CALCULATE ( [Vantagem do mandante], REMOVEFILTERS ( jogos_time[temporada] ), REMOVEFILTERS ( jogos_time[bloco] ), REMOVEFILTERS ( jogos_time[bloco_ordem] ), REMOVEFILTERS ( jogos_time[periodo_painel] ), REMOVEFILTERS ( jogos_time[periodo_painel_ordem] ), jogos_time[periodo_painel] = "Com torcida 2015-2019" )
+		formatString: 0.00
+		displayFolder: Mando
+		lineageTag: 3e9ec450-0c72-5e22-b3e5-48ba8da509ad
+
+	/// Ago/2020 a set/2021. Ignora o filtro de temporada.
+	measure 'Vantagem sem torcida' = CALCULATE ( [Vantagem do mandante], REMOVEFILTERS ( jogos_time[temporada] ), REMOVEFILTERS ( jogos_time[bloco] ), REMOVEFILTERS ( jogos_time[bloco_ordem] ), REMOVEFILTERS ( jogos_time[periodo_painel] ), REMOVEFILTERS ( jogos_time[periodo_painel_ordem] ), jogos_time[periodo_painel] = "Sem torcida 2020-2021" )
+		formatString: 0.00
+		displayFolder: Mando
+		lineageTag: aab07963-0f40-57f2-80df-bbb76ffef630
+
+	/// Variação da vantagem do mandante sem torcida contra 2015 a 2019.
+	measure 'Mando sem torcida' = DIVIDE ( [Vantagem sem torcida], [Vantagem com torcida 2015-2019] ) - 1
+		formatString: +0%;-0%;0%
+		displayFolder: KPI
+		lineageTag: 91f5fde9-c184-5e89-9847-53e748d91a31
+
+	/// Vantagem em cada período do painel; em branco fora dos três períodos.
+	measure 'Vantagem por período' = IF ( ISBLANK ( SELECTEDVALUE ( jogos_time[periodo_painel] ) ), BLANK (), CALCULATE ( [Vantagem do mandante], REMOVEFILTERS ( jogos_time[temporada] ), REMOVEFILTERS ( jogos_time[bloco] ), REMOVEFILTERS ( jogos_time[bloco_ordem] ) ) )
+		formatString: 0.00
+		displayFolder: Mando
+		lineageTag: 1251b593-3030-5681-a113-2a0f4c2ea850
+
+	/// Base do gráfico de resultados (uma linha por jogo, a do mandante).
+	measure 'Jogos em casa por período' = IF ( ISBLANK ( SELECTEDVALUE ( jogos_time[periodo_painel] ) ), BLANK (), CALCULATE ( COUNTROWS ( jogos_time ), jogos_time[lado] = "Casa", REMOVEFILTERS ( jogos_time[temporada] ), REMOVEFILTERS ( jogos_time[bloco] ), REMOVEFILTERS ( jogos_time[bloco_ordem] ) ) )
+		formatString: #,0
+		displayFolder: Mando
+		lineageTag: c8f434f4-0544-5f2c-993f-328ab411b247
+
+	/// Linha de referência no gráfico por temporada.
+	measure 'Média com torcida 2015-2019' = IF ( ISBLANK ( [Vantagem do mandante] ), BLANK (), [Vantagem com torcida 2015-2019] )
+		formatString: 0.00
+		displayFolder: Mando
+		lineageTag: 0bd68560-688c-5c10-8a8c-40978ea80b18
+
+	/// Só para times que jogaram nos dois períodos (21 na base).
+	measure 'Casa menos fora 2015-2019' = VAR a = [Vantagem com torcida 2015-2019] VAR s = [Vantagem sem torcida] RETURN IF ( ISBLANK ( a ) || ISBLANK ( s ), BLANK (), a )
+		formatString: 0.00
+		displayFolder: Times
+		lineageTag: ff548063-f46a-5889-9fe8-1722d05e21b7
+
+	/// Só para times que jogaram nos dois períodos.
+	measure 'Casa menos fora sem torcida' = VAR a = [Vantagem com torcida 2015-2019] VAR s = [Vantagem sem torcida] RETURN IF ( ISBLANK ( a ) || ISBLANK ( s ), BLANK (), s )
+		formatString: 0.00
+		displayFolder: Times
+		lineageTag: 10b7852e-1d93-578b-92f9-5812960aca8b
+
+	/// Sem torcida menos 2015 a 2019, para o mesmo time.
+	measure 'Variação sem torcida' = VAR a = [Vantagem com torcida 2015-2019] VAR s = [Vantagem sem torcida] RETURN IF ( ISBLANK ( a ) || ISBLANK ( s ), BLANK (), s - a )
+		formatString: +0.00;-0.00;0.00
+		displayFolder: Times
+		lineageTag: 27594769-84fb-50c9-bec1-17ffce676eae
+
+	/// Times com vantagem menor sem torcida (conferência: 17 de 21).
+	measure 'Times que caíram' = COUNTROWS ( FILTER ( VALUES ( times[time_id] ), [Variação sem torcida] < 0 ) )
+		formatString: 0
+		displayFolder: Times
+		lineageTag: 42e7ec94-d27b-5059-909e-c00c5f0f4e4f
+
+	/// Times que jogaram nos dois períodos.
+	measure 'Times comparados' = COUNTROWS ( FILTER ( VALUES ( times[time_id] ), NOT ISBLANK ( [Variação sem torcida] ) ) )
+		formatString: 0
+		displayFolder: Times
+		lineageTag: 0639f107-196c-5bde-8c17-0e4f8b2a8ba4
+
+	/// Mesma variação, só para desenhar a barra de dados (sem texto) ao lado do número.
+	measure 'Barra da variação' = [Variação sem torcida]
+		formatString: +0.00;-0.00;0.00
+		displayFolder: Times
+		lineageTag: 405503b7-7b88-5c36-a24f-6f1253781212
+
+	/// Título do gráfico por time, montado com as medidas (nenhum número digitado).
+	measure 'Título dos times' = FORMAT ( [Times que caíram], "0" ) & " de " & FORMAT ( [Times comparados], "0" ) & " times perderam força em casa"
+		displayFolder: Times
+		lineageTag: b290e673-02c5-58d7-865c-dcf5b2407379
+
+	/// Limão sem torcida, lavanda na volta parcial, violeta com torcida.
+	measure 'Cor da temporada' = SWITCH ( SELECTEDVALUE ( jogos_time[bloco_tipo] ), "sem", "#C6F500", "volta", "#8A8FB8", "#5D4DFF" )
+		displayFolder: Cores
+		lineageTag: 2d6a78c0-5107-5cbd-b83e-686e956bb139
+
+	/// Limão no período sem torcida.
+	measure 'Cor do período' = IF ( SELECTEDVALUE ( jogos_time[periodo_painel_ordem] ) = 2, "#C6F500", "#5D4DFF" )
+		displayFolder: Cores
+		lineageTag: 8af8c95f-9e1f-56de-b6b7-6a3625629f6d
+
+	/// Vermelho quando o time perdeu força em casa.
+	measure 'Cor da variação' = IF ( [Variação sem torcida] < 0, "#FF5C7A", "#2EE06E" )
+		displayFolder: Cores
+		lineageTag: 94324976-5131-5bc0-9c39-53ccb1dc4396

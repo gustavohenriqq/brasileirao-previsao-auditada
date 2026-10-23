@@ -1,0 +1,5 @@
+/// Pasta dos CSVs gerados por exportar_dados.py (caminho desta máquina).
+expression PastaDados = "C:\Users\Dell\Downloads\projeto-brasileirao\dashboards\powerbi\dados\" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 59b06cba-ca0a-5ce6-bf57-5a68cbd25930
+
+	annotation PBI_ResultType = Text

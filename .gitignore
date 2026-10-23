@@ -11,3 +11,14 @@ dbt/logs/
 dbt/dbt_packages/
 logs/
 dbt/.user.yml
+dashboards/powerbi/dados/
+# Arquivos baixados pelos scripts (marcas de terceiros: logo e escudos)
+dados/baixados/
+dashboards/powerbi/arte/escudos/*.png
+dashboards/powerbi/arte/png/logo_brasileirao.png
+dashboards/powerbi/Brasileirao.Report/StaticResources/RegisteredResources/logo_brasileirao.png
+# Intermediários e estado local do Power BI
+dashboards/powerbi/arte/html/
+dashboards/powerbi/arte/previa_*.png
+dashboards/powerbi/Brasileirao.SemanticModel/.pbi/
+dashboards/powerbi/Brasileirao.Report/.pbi/

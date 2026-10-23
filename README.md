@@ -40,6 +40,12 @@ está em [BRIEF.md](BRIEF.md).
 - Card do post em `docs/img/fase1_card.png`, gerado por `analise/card_fase1.py`
   a partir do JSON (precisa do Edge ou do Chrome para renderizar).
 
+**Painel Power BI** (23/10/2026): uma página gerada por script, com os
+números conferidos contra o JSON da análise. Ver
+[dashboards/powerbi/README.md](dashboards/powerbi/README.md).
+
+![Painel](docs/img/painel_mando_de_campo.png)
+
 **Testes:** dbt com 76 testes de dados (71 passam, 5 avisos propositais
 explicados abaixo) e 3 testes de unidade do parser.
 
