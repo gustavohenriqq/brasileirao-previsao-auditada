@@ -7,6 +7,13 @@ A queda é de 0,36 ponto por jogo (intervalo de 95%: 0,13 a 0,58), cerca de 45%.
 
 ![Vantagem do mandante por temporada](img/fase1_vantagem_por_temporada.png)
 
+Card para o post (1080 x 1350), gerado por `analise/card_fase1.py` a partir
+do mesmo JSON, sem número digitado à mão. O script para antes de desenhar se
+o intervalo sem torcida tocar o zero ou se a queda deixar de ser clara, porque
+aí o título do card estaria errado.
+
+![Card do post](img/fase1_card.png)
+
 ## Os números
 
 Denominador de todas as taxas: jogos disputados no período.

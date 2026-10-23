@@ -37,6 +37,8 @@ está em [BRIEF.md](BRIEF.md).
   contra o SQL antes de gravar `analise/resultados_fase1.json` e o gráfico.
 - Resultado e limites em [docs/fase1-mando-de-campo.md](docs/fase1-mando-de-campo.md),
   com a tabela de números para o post e onde conferir cada um.
+- Card do post em `docs/img/fase1_card.png`, gerado por `analise/card_fase1.py`
+  a partir do JSON (precisa do Edge ou do Chrome para renderizar).
 
 **Testes:** dbt com 76 testes de dados (71 passam, 5 avisos propositais
 explicados abaixo) e 3 testes de unidade do parser.
