@@ -1,0 +1,23 @@
+# Postgres local do projeto. Porta 5433 para não brigar com outros projetos
+# que já usam a 5432 na mesma máquina.
+services:
+  postgres:
+    image: postgres:16
+    container_name: brasileirao_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-brasileirao}
+      POSTGRES_USER: ${POSTGRES_USER:-brasileirao}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-brasileirao}
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-brasileirao} -d ${POSTGRES_DB:-brasileirao}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:

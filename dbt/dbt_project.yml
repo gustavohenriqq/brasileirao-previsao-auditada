@@ -1,0 +1,51 @@
+name: brasileirao
+version: "0.1.0"
+config-version: 2
+profile: brasileirao
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+vars:
+  primeira_temporada: 2003
+  ultima_temporada: 2025
+
+models:
+  brasileirao:
+    staging:
+      +schema: staging
+      +materialized: view
+    intermediate:
+      +schema: intermediate
+      +materialized: view
+    marts:
+      +schema: marts
+      +materialized: table
+      +post-hook: "analyze {{ this }}"
+
+seeds:
+  brasileirao:
+    +schema: seeds
+    de_para_times:
+      +column_types:
+        temporada_de: integer
+        temporada_ate: integer
+        votos: integer
+    divergencias_explicadas:
+      +column_types:
+        fonte: text
+        temporada: integer
+        mandante_id: text
+        visitante_id: text
+        tipo: text
+        explicacao: text
+    temporadas:
+      +column_types:
+        temporada: integer
+        times: integer
+        jogos_previstos: integer
+        jogos_esperados: integer

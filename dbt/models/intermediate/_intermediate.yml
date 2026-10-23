@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: int_jogos__fontes
+    description: "Todas as fontes no mesmo formato, com o id do time da base. Uma linha = um jogo em uma fonte."
+    data_tests:
+      - combinacao_unica:
+          arguments:
+            colunas: [fonte, temporada, mandante_id, visitante_id]
+    columns:
+      - name: mandante_id
+        description: "Nulo = nome de time sem linha em seeds/de_para_times.csv."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('times')
+                field: time_id
+      - name: visitante_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('times')
+                field: time_id
+
+  - name: int_datas__maioria
+    description: "Data mais apoiada pelas fontes de conferência. Uma linha = um jogo."
+    data_tests:
+      - combinacao_unica:
+          arguments:
+            colunas: [temporada, mandante_id, visitante_id]

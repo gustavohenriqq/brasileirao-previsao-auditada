@@ -1,0 +1,114 @@
+version: 2
+
+models:
+  - name: fct_jogos
+    description: >
+      Jogos da Série A de 2003 a 2025. Uma linha = um jogo. Placar, rodada e
+      mando vêm da base adaoduque; data corrigida por maioria quando a base
+      está errada; odds de fechamento (football-data.co.uk, 2012+) e público
+      (ESPN, 2006+) entram como colunas.
+    data_tests:
+      - combinacao_unica:
+          arguments:
+            colunas: [temporada, mandante_id, visitante_id]
+    columns:
+      - name: jogo_id
+        description: "md5 de temporada|mandante|visitante."
+        data_tests: [unique, not_null]
+      - name: temporada
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('temporadas')
+                field: temporada
+      - name: rodada
+        data_tests: [not_null]
+      - name: data
+        data_tests: [not_null]
+      - name: mandante_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_times')
+                field: time_id
+      - name: visitante_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_times')
+                field: time_id
+      - name: gols_mandante
+        data_tests:
+          - not_null
+          - valor_minimo:
+              arguments:
+                minimo: 0
+      - name: gols_visitante
+        data_tests:
+          - not_null
+          - valor_minimo:
+              arguments:
+                minimo: 0
+      - name: resultado
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['M', 'E', 'V']
+      - name: data_corrigida
+        description: "28 jogos de 2007 a 2010 com data da base 7 ou 14 dias antes da real."
+
+  - name: dim_times
+    columns:
+      - name: time_id
+        data_tests: [unique, not_null]
+      - name: uf
+        data_tests: [not_null]
+
+  - name: dim_temporadas
+    columns:
+      - name: temporada
+        data_tests: [unique, not_null]
+
+  - name: conferencia_fontes
+    description: >
+      Um jogo da base comparado com cada fonte que cobre a temporada. As
+      divergências não são apagadas: os testes abaixo avisam quantas existem.
+    data_tests:
+      - combinacao_unica:
+          arguments:
+            colunas: [fonte, temporada, mandante_id, visitante_id]
+      - linhas_onde:
+          name: conferencia_placar_ou_ausencia_diverge
+          arguments:
+            condicao: "situacao <> 'confere'"
+          config:
+            severity: warn
+      - linhas_onde:
+          name: conferencia_data_diverge_mais_de_1_dia
+          arguments:
+            condicao: "diferenca_dias > 1"
+          config:
+            severity: warn
+      - linhas_onde:
+          name: conferencia_rodada_diverge
+          arguments:
+            condicao: "rodada_confere = false"
+          config:
+            severity: warn
+    columns:
+      - name: situacao
+        description: "confere, placar_diverge, so_na_base, so_na_fonte ou nao_encerrado_na_fonte."
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['confere', 'placar_diverge', 'so_na_base', 'so_na_fonte', 'nao_encerrado_na_fonte']
+
+  - name: resumo_conferencia
+    description: "Uma linha = uma fonte em uma temporada, com a contagem de cada tipo de divergência."
+    data_tests:
+      - combinacao_unica:
+          arguments:
+            colunas: [fonte, temporada]

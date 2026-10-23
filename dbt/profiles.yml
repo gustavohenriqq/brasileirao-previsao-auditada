@@ -1,0 +1,13 @@
+# Lê do ambiente; os padrões batem com o .env.example e o docker-compose.
+brasileirao:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('POSTGRES_HOST', 'localhost') }}"
+      port: "{{ env_var('POSTGRES_PORT', '5433') | int }}"
+      dbname: "{{ env_var('POSTGRES_DB', 'brasileirao') }}"
+      user: "{{ env_var('POSTGRES_USER', 'brasileirao') }}"
+      password: "{{ env_var('POSTGRES_PASSWORD', 'brasileirao') }}"
+      schema: public
+      threads: 4

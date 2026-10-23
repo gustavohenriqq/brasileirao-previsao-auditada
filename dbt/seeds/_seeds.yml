@@ -1,0 +1,43 @@
+version: 2
+
+seeds:
+  - name: de_para_times
+    description: >
+      Nome do time em cada fonte para o id da base. Proposto por
+      scripts/sugerir_de_para.py (casando jogos por temporada, placar e data)
+      e revisado à mão; origem diz qual. temporada_de/ate vazios = todas.
+    data_tests:
+      - combinacao_unica:
+          arguments:
+            colunas: [fonte, nome_na_fonte, temporada_de]
+    columns:
+      - name: time_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('times')
+                field: time_id
+
+  - name: times
+    columns:
+      - name: time_id
+        data_tests: [unique, not_null]
+
+  - name: temporadas
+    columns:
+      - name: temporada
+        data_tests: [unique, not_null]
+
+  - name: divergencias_explicadas
+    description: >
+      Explicação de cada divergência entre fontes, gerada por
+      scripts/explicar_divergencias.py com as regras da investigação de
+      23/10/2026 (docs/conferencia.md).
+    data_tests:
+      - combinacao_unica:
+          arguments:
+            colunas: [fonte, temporada, mandante_id, visitante_id]
+    columns:
+      - name: explicacao
+        data_tests: [not_null]

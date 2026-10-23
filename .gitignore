@@ -1,0 +1,13 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+# Arquivos baixados das fontes: cada fonte tem sua licença, então o bruto
+# não é redistribuído. A ingestão baixa de novo (ver docs/fontes.md).
+dados/brutos/
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/
+logs/
+dbt/.user.yml

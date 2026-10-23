@@ -1,0 +1,64 @@
+version: 2
+
+models:
+  - name: stg_adaoduque__jogos
+    description: "Base adaoduque com tipos. Uma linha = um jogo."
+    columns:
+      - name: temporada
+        data_tests: [not_null]
+      - name: data
+        description: "Nulo aqui é formato de data novo que o case não reconhece."
+        data_tests: [not_null]
+      - name: rodada
+        data_tests: [not_null]
+      - name: gols_mandante
+        data_tests: [not_null]
+      - name: gols_visitante
+        data_tests: [not_null]
+
+  - name: stg_mendeley__jogos
+    columns:
+      - name: data
+        data_tests: [not_null]
+      - name: gols_mandante
+        data_tests: [not_null]
+      - name: gols_visitante
+        data_tests: [not_null]
+
+  - name: stg_fdcouk__jogos
+    columns:
+      - name: data
+        data_tests: [not_null]
+      - name: gols_mandante
+        description: "Nulo só no jogo de 2016 que não foi disputado."
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+
+  - name: stg_espn__jogos
+    data_tests:
+      - linhas_onde:
+          name: espn_jogo_nao_encerrado
+          description: "Esperado: o jogo cancelado de 2016 e um jogo de 2021 parado em segundo tempo."
+          arguments:
+            condicao: "status <> 'STATUS_FULL_TIME'"
+          config:
+            severity: warn
+    columns:
+      - name: id_na_fonte
+        data_tests: [unique, not_null]
+
+  - name: stg_openfootball__jogos
+    columns:
+      - name: data
+        data_tests: [not_null]
+      - name: rodada
+        data_tests: [not_null]
+
+  - name: stg_fdorg__jogos
+    columns:
+      - name: id_na_fonte
+        data_tests: [unique, not_null]
+      - name: rodada
+        data_tests: [not_null]

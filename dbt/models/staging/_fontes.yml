@@ -1,0 +1,20 @@
+version: 2
+
+sources:
+  - name: raw
+    description: "Bruto de cada fonte, tudo em texto, carregado por ingestao/carregar.py"
+    schema: raw
+    loaded_at_field: _carregado_em
+    tables:
+      - name: adaoduque_jogos
+        description: "Espinha da base, 2003 a 2025. CSV consolidado até 2024 e JSON da temporada 2025."
+      - name: mendeley_jogos
+        description: "Mendeley Data, CC BY 4.0, 2003 a 2019. Única conferência para 2003 a 2005."
+      - name: fdcouk_jogos
+        description: "football-data.co.uk, BRA.csv, 2012 em diante, com odds de fechamento."
+      - name: espn_jogos
+        description: "API JSON pública da ESPN, 2006 em diante, com público pagante."
+      - name: openfootball_jogos
+        description: "openfootball/brazil, CC0, 2018 em diante, com rodada."
+      - name: fdorg_jogos
+        description: "football-data.org, plano gratuito, 2023 em diante, com rodada."
