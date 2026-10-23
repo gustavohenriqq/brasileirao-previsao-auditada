@@ -5,3 +5,7 @@ psycopg2-binary>=2.9
 python-dotenv>=1.0
 requests>=2.31
 pytest>=8
+
+# Fase 1: análise e gráfico
+numpy>=1.26
+matplotlib>=3.8

@@ -112,3 +112,32 @@ models:
       - combinacao_unica:
           arguments:
             colunas: [fonte, temporada]
+
+  - name: mando_jogos
+    description: "Fase 1. Uma linha = um jogo, com o período de torcida (seeds/periodos_torcida.csv)."
+    data_tests:
+      - linhas_onde:
+          name: mando_sem_torcida_com_publico
+          description: >
+            Esperado: 1 jogo (Chapecoense x Palmeiras, 18/09/2021, 115 pessoas
+            no registro da ESPN, antes da liberação da 23ª rodada).
+          arguments:
+            condicao: "periodo = 'sem_torcida' and publico_espn > 0"
+          config:
+            severity: warn
+    columns:
+      - name: jogo_id
+        data_tests: [unique, not_null]
+      - name: periodo
+        description: "Nulo = data fora de todos os períodos do seed."
+        data_tests: [not_null]
+      - name: pontos_mandante
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [0, 1, 3]
+
+  - name: mando_por_periodo
+    columns:
+      - name: periodo
+        data_tests: [unique, not_null]

@@ -1,8 +1,15 @@
 # Brasileirão: previsão auditada
 
-**9.165 jogos da Série A de 2003 a 2025 conferidos contra 5 fontes
-independentes: nos 17 placares em que uma fonte discordou, a base estava
-certa; nas datas, quem errou foi a base, em 28 jogos.**
+**Sem torcida, a vantagem do mandante na Série A caiu quase pela metade, mas
+não sumiu: de 0,80 ponto por jogo a mais que o visitante (2015 a 2019) para
+0,44 nos 594 jogos sem público de 2020 e 2021.** A queda passa em três
+checagens: contra a tendência histórica, dentro do mesmo time (17 de 21 times
+caíram) e reamostrando rodadas inteiras. Detalhes em
+[docs/fase1-mando-de-campo.md](docs/fase1-mando-de-campo.md).
+
+A base por trás: 9.165 jogos de 2003 a 2025 conferidos contra 5 fontes
+independentes. Nos 17 placares em que uma fonte discordou, a base estava
+certa; nas datas, quem errou foi a base, em 28 jogos.
 
 O objetivo do projeto é publicar as probabilidades de cada jogo da Série A de
 2027 **antes** da rodada, com registro datado no GitHub, e depois dar nota ao
@@ -20,11 +27,21 @@ está em [BRIEF.md](BRIEF.md).
   [docs/fontes.md](docs/fontes.md) (cobertura, licença e limite de cada uma).
 - Conferência entre fontes com todas as divergências registradas e explicadas
   em [docs/conferencia.md](docs/conferencia.md).
-- dbt com 68 testes de dados: 64 passam e 4 avisos são propositais (divergências entre
-  fontes já explicadas, ver abaixo). Mais 3 testes de unidade do parser.
 
-Fases 1 (mando de campo sem torcida em 2020 e 2021), 2 (modelos e backtest) e
-3 (automação para 2027) ainda não começaram.
+**Fase 1: mando de campo sem torcida** (23/10/2026)
+
+- Períodos de torcida definidos por data (`dbt/seeds/periodos_torcida.csv`) e
+  conferidos com o público da ESPN.
+- `marts.mando_jogos` e `marts.mando_por_periodo` no dbt; intervalos de
+  confiança e checagens em `analise/fase1_mando.py`, que confere as médias
+  contra o SQL antes de gravar `analise/resultados_fase1.json` e o gráfico.
+- Resultado e limites em [docs/fase1-mando-de-campo.md](docs/fase1-mando-de-campo.md),
+  com a tabela de números para o post e onde conferir cada um.
+
+**Testes:** dbt com 76 testes de dados (71 passam, 5 avisos propositais
+explicados abaixo) e 3 testes de unidade do parser.
+
+Fases 2 (modelos e backtest) e 3 (automação para 2027) ainda não começaram.
 
 ## Arquitetura
 
@@ -43,6 +60,10 @@ marts.fct_jogos              um jogo por linha, 2003 a 2025
 marts.dim_times / dim_temporadas
 marts.conferencia_fontes     jogo da base x cada fonte, com a explicação da divergência
 marts.resumo_conferencia     uma fonte por temporada
+marts.mando_jogos / mando_por_periodo   Fase 1: jogo com o período de torcida
+   │  analise/fase1_mando.py (bootstrap, checagens, gráfico)
+   ▼
+analise/resultados_fase1.json + docs/img/fase1_vantagem_por_temporada.png
 ```
 
 | Fonte | Anos | Para quê |
@@ -68,6 +89,7 @@ cd dbt
 ..\.venv\Scripts\python -m dbt.cli.main build --profiles-dir .
 cd ..
 .venv\Scripts\python -m pytest
+.venv\Scripts\python analise\fase1_mando.py
 ```
 
 O dbt roda por `python -m dbt.cli.main` porque política de aplicativos do
@@ -87,7 +109,7 @@ Windows pode bloquear o `dbt.exe`. Os arquivos baixados ficam em
 | Toda divergência tem explicação | `assert_divergencia_explicada` (aviso) |
 | Odds do football-data.co.uk casam com algum jogo | `assert_odds_casam_com_jogos` |
 
-Os 4 avisos esperados hoje:
+Os 5 avisos esperados hoje:
 
 | Aviso | Linhas | Por quê |
 |---|---|---|
@@ -95,6 +117,7 @@ Os 4 avisos esperados hoje:
 | `conferencia_placar_ou_ausencia_diverge` | 21 | 17 placares em que a base está certa, 3 fontes que listam o jogo não disputado de 2016, 1 status parado na ESPN |
 | `espn_jogo_nao_encerrado` | 2 | O jogo cancelado de 2016 e um jogo de 2021 parado em "segundo tempo" |
 | `not_null_stg_fdcouk__jogos_gols_mandante` | 1 | O jogo não disputado de 2016, sem placar |
+| `mando_sem_torcida_com_publico` | 1 | Chapecoense x Palmeiras, 18/09/2021, 115 pessoas, antes da liberação do público na 23ª rodada |
 
 ## Diário de bordo
 
@@ -115,6 +138,12 @@ Erros e achados, na ordem em que apareceram:
 - **Aviso que contava errado.** O primeiro teste de divergência usava
   `accepted_values`, que conta valores distintos: dizia "3" quando eram 21
   jogos divergentes. Trocado por um teste que devolve uma linha por jogo.
+- **Antes de qual "antes"?** Contra 2003 a 2019, a queda sem torcida parece
+  maior, mas o mando já vinha caindo devagar (0,006 ponto por ano). A
+  comparação principal virou 2015 a 2019, mais a checagem contra a tendência.
+- **Gráfico com rótulos sobrepostos.** A primeira versão tinha os dois pedaços
+  de 2021 com rótulos encavalados e a legenda em cima de uma barra; corrigido
+  olhando a imagem antes de publicar.
 
 ## Regras do projeto
 

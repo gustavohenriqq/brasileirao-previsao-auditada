@@ -43,6 +43,11 @@ seeds:
         visitante_id: text
         tipo: text
         explicacao: text
+    periodos_torcida:
+      +column_types:
+        ordem: integer
+        inicio: date
+        fim: date
     temporadas:
       +column_types:
         temporada: integer

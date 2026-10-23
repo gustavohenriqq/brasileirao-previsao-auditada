@@ -1,0 +1,455 @@
+{
+  "gerado_por": "analise/fase1_mando.py",
+  "semente": 2027,
+  "repeticoes_bootstrap": 10000,
+  "periodos": {
+    "com_torcida_antes": {
+      "jogos": 6885,
+      "taxa_vitoria_mandante": 0.5066085693536674,
+      "taxa_empate": 0.26042120551924475,
+      "taxa_vitoria_visitante": 0.23297022512708787,
+      "pontos_por_jogo_mandante": 1.780246913580247,
+      "pontos_por_jogo_visitante": 0.9593318809005084,
+      "vantagem_pontos": 0.8209150326797385,
+      "saldo_medio_mandante": 0.5482933914306464,
+      "ic95": {
+        "vantagem_pontos": [
+          0.7625272331154684,
+          0.8766884531590414
+        ],
+        "saldo_medio_mandante": [
+          0.5112563543936093,
+          0.5856209150326798
+        ],
+        "taxa_vitoria_mandante": [
+          0.4948438634713144,
+          0.5185185185185185
+        ]
+      }
+    },
+    "sem_torcida": {
+      "jogos": 594,
+      "taxa_vitoria_mandante": 0.42424242424242425,
+      "taxa_empate": 0.2996632996632997,
+      "taxa_vitoria_visitante": 0.2760942760942761,
+      "pontos_por_jogo_mandante": 1.5723905723905724,
+      "pontos_por_jogo_visitante": 1.127946127946128,
+      "vantagem_pontos": 0.4444444444444444,
+      "saldo_medio_mandante": 0.27104377104377103,
+      "ic95": {
+        "vantagem_pontos": [
+          0.24242424242424243,
+          0.6414141414141414
+        ],
+        "saldo_medio_mandante": [
+          0.14814814814814814,
+          0.39057239057239057
+        ],
+        "taxa_vitoria_mandante": [
+          0.3838383838383838,
+          0.46464646464646464
+        ]
+      }
+    },
+    "volta_parcial": {
+      "jogos": 166,
+      "taxa_vitoria_mandante": 0.5602409638554217,
+      "taxa_empate": 0.25903614457831325,
+      "taxa_vitoria_visitante": 0.18072289156626506,
+      "pontos_por_jogo_mandante": 1.9397590361445782,
+      "pontos_por_jogo_visitante": 0.8012048192771084,
+      "vantagem_pontos": 1.1385542168674698,
+      "saldo_medio_mandante": 0.5481927710843374,
+      "ic95": {
+        "vantagem_pontos": [
+          0.7771084337349398,
+          1.4819277108433735
+        ],
+        "saldo_medio_mandante": [
+          0.3253012048192771,
+          0.7650602409638554
+        ],
+        "taxa_vitoria_mandante": [
+          0.4879518072289157,
+          0.6326807228915641
+        ]
+      }
+    },
+    "com_torcida_depois": {
+      "jogos": 1520,
+      "taxa_vitoria_mandante": 0.47171052631578947,
+      "taxa_empate": 0.26710526315789473,
+      "taxa_vitoria_visitante": 0.2611842105263158,
+      "pontos_por_jogo_mandante": 1.6822368421052631,
+      "pontos_por_jogo_visitante": 1.0506578947368421,
+      "vantagem_pontos": 0.631578947368421,
+      "saldo_medio_mandante": 0.42039473684210527,
+      "ic95": {
+        "vantagem_pontos": [
+          0.5072368421052632,
+          0.7519736842105263
+        ],
+        "saldo_medio_mandante": [
+          0.3407730263157895,
+          0.5
+        ],
+        "taxa_vitoria_mandante": [
+          0.4473684210526316,
+          0.4967105263157895
+        ]
+      }
+    },
+    "com_torcida_2015_2019": {
+      "jogos": 1899,
+      "taxa_vitoria_mandante": 0.5028962611901,
+      "taxa_empate": 0.2611901000526593,
+      "taxa_vitoria_visitante": 0.23591363875724064,
+      "pontos_por_jogo_mandante": 1.7698788836229595,
+      "pontos_por_jogo_visitante": 0.9689310163243813,
+      "vantagem_pontos": 0.8009478672985783,
+      "saldo_medio_mandante": 0.5028962611901,
+      "ic95": {
+        "vantagem_pontos": [
+          0.6919431279620853,
+          0.9083728278041074
+        ],
+        "saldo_medio_mandante": [
+          0.4365455502896261,
+          0.5681937862032649
+        ],
+        "taxa_vitoria_mandante": [
+          0.4807793575566087,
+          0.5250131648235914
+        ]
+      }
+    }
+  },
+  "diferencas_vantagem_pontos": {
+    "sem_torcida_menos_2003_2019": {
+      "diferenca": -0.3764705882352941,
+      "ic95": [
+        -0.5800762527233115,
+        -0.1719939591998415
+      ],
+      "queda_relativa": 0.4585987261146497
+    },
+    "sem_torcida_menos_2015_2019": {
+      "diferenca": -0.35650342285413383,
+      "ic95": [
+        -0.581963593278759,
+        -0.13212216956292794
+      ],
+      "queda_relativa": 0.4451019066403682
+    },
+    "sem_torcida_menos_2022_2025": {
+      "diferenca": -0.1871345029239766,
+      "ic95": [
+        -0.4235195707070707,
+        0.05273275518341311
+      ],
+      "queda_relativa": 0.2962962962962963
+    },
+    "2022_2025_menos_2015_2019": {
+      "diferenca": -0.16936891993015724,
+      "ic95": [
+        -0.3344085183337491,
+        -0.0019411532385466268
+      ],
+      "queda_relativa": 0.21146060417315493
+    }
+  },
+  "diferencas_saldo": {
+    "sem_torcida_menos_2015_2019": {
+      "diferenca": -0.23185249014632897,
+      "ic95": [
+        -0.36794684602741473,
+        -0.09727428311551538
+      ],
+      "queda_relativa": 0.46103442805013484
+    }
+  },
+  "sensibilidade_por_rodada": {
+    "sem_torcida_menos_2015_2019": {
+      "ic95": [
+        -0.5880266018306637,
+        -0.12194860882741744
+      ]
+    }
+  },
+  "contra_tendencia": {
+    "inclinacao_por_ano": -0.006267616300669698,
+    "periodos": {
+      "sem_torcida": {
+        "observado": 0.4444444444444444,
+        "esperado_pela_tendencia": 0.7569783420812473,
+        "observado_menos_esperado": -0.31253389763680284,
+        "ic95": [
+          -0.551911401389378,
+          -0.08101480513547121
+        ]
+      },
+      "com_torcida_depois": {
+        "observado": 0.631578947368421,
+        "esperado_pela_tendencia": 0.737299715143959,
+        "observado_menos_esperado": -0.10572076777553796,
+        "ic95": [
+          -0.31555413958904155,
+          0.11423224353242283
+        ]
+      }
+    }
+  },
+  "mesmo_time": {
+    "times": 21,
+    "gap_medio_2015_2019": 0.8092349668497485,
+    "gap_medio_sem_torcida": 0.42698935086006773,
+    "diferenca_media": -0.3822456159896808,
+    "ic95": [
+      -0.5365132128500134,
+      -0.22636774431926834
+    ],
+    "times_com_queda": 17
+  },
+  "por_temporada": [
+    {
+      "temporada": 2003,
+      "periodo": "com_torcida_antes",
+      "jogos": 552,
+      "vantagem_pontos": 1.0,
+      "ic95": [
+        0.7934782608695652,
+        1.201086956521739
+      ]
+    },
+    {
+      "temporada": 2004,
+      "periodo": "com_torcida_antes",
+      "jogos": 552,
+      "vantagem_pontos": 0.8913043478260869,
+      "ic95": [
+        0.6902173913043478,
+        1.0923913043478262
+      ]
+    },
+    {
+      "temporada": 2005,
+      "periodo": "com_torcida_antes",
+      "jogos": 462,
+      "vantagem_pontos": 0.7142857142857143,
+      "ic95": [
+        0.4805194805194805,
+        0.948051948051948
+      ]
+    },
+    {
+      "temporada": 2006,
+      "periodo": "com_torcida_antes",
+      "jogos": 380,
+      "vantagem_pontos": 0.781578947368421,
+      "ic95": [
+        0.5289473684210526,
+        1.0342105263157895
+      ]
+    },
+    {
+      "temporada": 2007,
+      "periodo": "com_torcida_antes",
+      "jogos": 380,
+      "vantagem_pontos": 0.7421052631578947,
+      "ic95": [
+        0.48947368421052634,
+        0.9947368421052631
+      ]
+    },
+    {
+      "temporada": 2008,
+      "periodo": "com_torcida_antes",
+      "jogos": 380,
+      "vantagem_pontos": 1.0421052631578946,
+      "ic95": [
+        0.8052631578947368,
+        1.2789473684210526
+      ]
+    },
+    {
+      "temporada": 2009,
+      "periodo": "com_torcida_antes",
+      "jogos": 380,
+      "vantagem_pontos": 0.8842105263157894,
+      "ic95": [
+        0.6473684210526316,
+        1.1210526315789473
+      ]
+    },
+    {
+      "temporada": 2010,
+      "periodo": "com_torcida_antes",
+      "jogos": 380,
+      "vantagem_pontos": 0.7578947368421053,
+      "ic95": [
+        0.5131578947368421,
+        0.9947368421052631
+      ]
+    },
+    {
+      "temporada": 2011,
+      "periodo": "com_torcida_antes",
+      "jogos": 380,
+      "vantagem_pontos": 0.7342105263157894,
+      "ic95": [
+        0.48157894736842105,
+        0.9789473684210527
+      ]
+    },
+    {
+      "temporada": 2012,
+      "periodo": "com_torcida_antes",
+      "jogos": 380,
+      "vantagem_pontos": 0.718421052631579,
+      "ic95": [
+        0.47368421052631576,
+        0.9631578947368421
+      ]
+    },
+    {
+      "temporada": 2013,
+      "periodo": "com_torcida_antes",
+      "jogos": 380,
+      "vantagem_pontos": 0.7578947368421053,
+      "ic95": [
+        0.5131578947368421,
+        0.9947368421052631
+      ]
+    },
+    {
+      "temporada": 2014,
+      "periodo": "com_torcida_antes",
+      "jogos": 380,
+      "vantagem_pontos": 0.8368421052631579,
+      "ic95": [
+        0.5921052631578947,
+        1.081578947368421
+      ]
+    },
+    {
+      "temporada": 2015,
+      "periodo": "com_torcida_antes",
+      "jogos": 380,
+      "vantagem_pontos": 0.8763157894736842,
+      "ic95": [
+        0.631578947368421,
+        1.1210526315789473
+      ]
+    },
+    {
+      "temporada": 2016,
+      "periodo": "com_torcida_antes",
+      "jogos": 379,
+      "vantagem_pontos": 0.941952506596306,
+      "ic95": [
+        0.6965699208443272,
+        1.187335092348285
+      ]
+    },
+    {
+      "temporada": 2017,
+      "periodo": "com_torcida_antes",
+      "jogos": 380,
+      "vantagem_pontos": 0.45,
+      "ic95": [
+        0.18947368421052632,
+        0.7026315789473684
+      ]
+    },
+    {
+      "temporada": 2018,
+      "periodo": "com_torcida_antes",
+      "jogos": 380,
+      "vantagem_pontos": 1.0578947368421052,
+      "ic95": [
+        0.8289473684210527,
+        1.2868421052631578
+      ]
+    },
+    {
+      "temporada": 2019,
+      "periodo": "com_torcida_antes",
+      "jogos": 380,
+      "vantagem_pontos": 0.6789473684210526,
+      "ic95": [
+        0.4263157894736842,
+        0.9315789473684211
+      ]
+    },
+    {
+      "temporada": 2020,
+      "periodo": "sem_torcida",
+      "jogos": 380,
+      "vantagem_pontos": 0.5526315789473685,
+      "ic95": [
+        0.3,
+        0.8052631578947368
+      ]
+    },
+    {
+      "temporada": 2021,
+      "periodo": "sem_torcida",
+      "jogos": 214,
+      "vantagem_pontos": 0.2523364485981308,
+      "ic95": [
+        -0.08411214953271028,
+        0.5747663551401869
+      ]
+    },
+    {
+      "temporada": 2021,
+      "periodo": "volta_parcial",
+      "jogos": 166,
+      "vantagem_pontos": 1.1385542168674698,
+      "ic95": [
+        0.7771084337349398,
+        1.4819277108433735
+      ]
+    },
+    {
+      "temporada": 2022,
+      "periodo": "com_torcida_depois",
+      "jogos": 380,
+      "vantagem_pontos": 0.5052631578947369,
+      "ic95": [
+        0.26052631578947366,
+        0.75
+      ]
+    },
+    {
+      "temporada": 2023,
+      "periodo": "com_torcida_depois",
+      "jogos": 380,
+      "vantagem_pontos": 0.5842105263157895,
+      "ic95": [
+        0.33157894736842103,
+        0.8447368421052631
+      ]
+    },
+    {
+      "temporada": 2024,
+      "periodo": "com_torcida_depois",
+      "jogos": 380,
+      "vantagem_pontos": 0.6394736842105263,
+      "ic95": [
+        0.39473684210526316,
+        0.8921052631578947
+      ]
+    },
+    {
+      "temporada": 2025,
+      "periodo": "com_torcida_depois",
+      "jogos": 380,
+      "vantagem_pontos": 0.7973684210526316,
+      "ic95": [
+        0.5526315789473685,
+        1.0421052631578946
+      ]
+    }
+  ]
+}
