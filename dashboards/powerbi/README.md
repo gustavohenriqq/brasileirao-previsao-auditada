@@ -5,9 +5,16 @@
 Uma página (1920 x 1080) sobre a base histórica da Série A de 2003 a 2025:
 cartões de KPI, a vantagem do mandante por temporada com os jogos sem torcida
 em limão, a comparação com torcida x sem torcida, quem vence os jogos por
-período e, na coluna da direita, os 21 clubes que jogaram com e sem torcida,
+período e, na coluna da direita, 25 clubes que jogaram com e sem torcida,
 cada um contra ele mesmo (escudo, número e barra na mesma linha). Filtros de
 temporada e de time.
+
+A tabela por time junta os 21 clubes que estavam na Série A com e sem torcida
+e 4 tradicionais que passaram o período sem torcida na Série B (Cruzeiro,
+Vitória, Figueirense e Ponte Preta; para eles, Série A 2015-2019 contra Série
+B sem torcida). Por isso o título da tabela diz "20 de 25". Os números
+principais (0,44 sem torcida, -45%) e a conferência "17 de 21" usam só a Série
+A, porque para os 4 muda a divisão junto com a torcida.
 
 Tudo é gerado por script, em texto versionado (PBIP: modelo em TMDL,
 relatório em PBIR). Nenhum número é digitado à mão: todo valor sai de uma
@@ -77,3 +84,7 @@ sem torcida, variação, times que caíram e times comparados) bateram com
 `analise/resultados_fase1.json` e com contas feitas no CSV exportado das marts.
 `tools/conferir_painel.py` faz a mesma conferência contra o SQL quando o
 Postgres está no ar.
+
+Em 24/10/2026, com os tradicionais da Série B: `conferir_painel.py` passou nas
+17 conferências (as 11 de antes, "20 de 25" na tabela e a variação de cada um
+dos 4 clubes contra `tradicionais_serie_b` do JSON).

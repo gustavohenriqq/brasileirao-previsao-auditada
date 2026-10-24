@@ -38,11 +38,11 @@
                       "Entity": "times"
                     }
                   },
-                  "Property": "nome_tabela"
+                  "Property": "nome"
                 }
               },
-              "queryRef": "times.nome_tabela",
-              "nativeQueryRef": "nome_tabela",
+              "queryRef": "times.nome",
+              "nativeQueryRef": "nome",
               "displayName": "Time"
             },
             {
@@ -303,7 +303,7 @@
             }
           },
           "selector": {
-            "metadata": "times.nome_tabela"
+            "metadata": "times.nome"
           }
         },
         {
@@ -472,7 +472,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Sem torcida x 2015-2019 · (B) tradicionais que jogaram a Série B sem torcida'"
+                  "Value": "'Clubes que jogaram com e sem torcida · sem torcida x 2015-2019'"
                 }
               }
             },

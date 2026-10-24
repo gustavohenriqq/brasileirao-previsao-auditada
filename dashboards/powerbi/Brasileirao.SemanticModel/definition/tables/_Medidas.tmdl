@@ -110,11 +110,23 @@ table _Medidas
 		displayFolder: Times
 		lineageTag: 35486e3c-9e02-5253-97a7-afbba8bc78e6
 
-	/// Como Variação sem torcida, mas os tradicionais da Série B usam a B sem torcida. O título e o -45% não usam esta.
+	/// Como Variação sem torcida, mas os tradicionais da Série B usam a B sem torcida. O -45% e o 0,44 não usam esta.
 	measure 'Variação na tabela' = VAR a = [Vantagem com torcida 2015-2019] VAR sa = [Vantagem sem torcida] VAR sb = [Vantagem sem torcida Série B] VAR s = IF ( ISBLANK ( sa ), sb, sa ) RETURN IF ( ISBLANK ( a ) || ISBLANK ( s ), BLANK (), s - a )
 		formatString: +0.00;-0.00;0.00
 		displayFolder: Times
 		lineageTag: 2289e75f-c85b-557d-9cd1-f88c8e163c71
+
+	/// Como Times que caíram, contando também os tradicionais da Série B (conferência: 20 de 25).
+	measure 'Times que caíram na tabela' = COUNTROWS ( FILTER ( VALUES ( times[time_id] ), [Variação na tabela] < 0 ) )
+		formatString: 0
+		displayFolder: Times
+		lineageTag: 04f4258c-f407-5af7-8bef-6acf8e1bf978
+
+	/// Linhas da tabela por time: 21 da Série A e 4 tradicionais da Série B.
+	measure 'Times na tabela' = COUNTROWS ( FILTER ( VALUES ( times[time_id] ), NOT ISBLANK ( [Variação na tabela] ) ) )
+		formatString: 0
+		displayFolder: Times
+		lineageTag: 8683f2c2-ff4e-5cc1-b8e9-8ee84f4914fe
 
 	/// Mesma variação, só para desenhar a barra de dados (sem texto) ao lado do número.
 	measure 'Barra da variação' = [Variação na tabela]
@@ -123,7 +135,7 @@ table _Medidas
 		lineageTag: 405503b7-7b88-5c36-a24f-6f1253781212
 
 	/// Título do gráfico por time, montado com as medidas (nenhum número digitado).
-	measure 'Título dos times' = FORMAT ( [Times que caíram], "0" ) & " de " & FORMAT ( [Times comparados], "0" ) & " times perderam força em casa"
+	measure 'Título dos times' = FORMAT ( [Times que caíram na tabela], "0" ) & " de " & FORMAT ( [Times na tabela], "0" ) & " times perderam força em casa"
 		displayFolder: Times
 		lineageTag: b290e673-02c5-58d7-865c-dcf5b2407379
 

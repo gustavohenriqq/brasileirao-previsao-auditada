@@ -62,8 +62,8 @@ TIMES = """select time_id, nome, uf, primeira_temporada, ultima_temporada, tempo
 from marts.dim_times where temporadas_na_serie_a > 0 order by nome"""
 
 # Clubes tradicionais (9+ temporadas na Série A desde 2003, na Série A em
-# 2015-2019) que jogaram a Série B no período sem torcida. Entram na tabela do
-# painel marcados com "(B)"; os números principais seguem só com a Série A.
+# 2015-2019) que jogaram a Série B no período sem torcida. Entram só na tabela
+# por time do painel; os números principais seguem só com a Série A.
 TRADICIONAIS_B = ("Cruzeiro", "Vitoria", "Figueirense", "Ponte Preta")
 
 JOGOS_TIME_B = f"""
@@ -108,7 +108,6 @@ def anexar_escudos(arquivo: Path) -> int:
         linhas = list(csv.DictReader(f))
     n = 0
     for linha in linhas:
-        linha["nome_tabela"] = linha["nome"] + (" (B)" if linha["time_id"] in TRADICIONAIS_B else "")
         png = pasta / f"{linha['time_id']}.png"
         linha["escudo"] = ""
         if png.exists():

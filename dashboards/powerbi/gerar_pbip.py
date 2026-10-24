@@ -72,7 +72,6 @@ COLUNAS_TIMES = [
     ("ultima_temporada", "int64", "Int64.Type", "0", None),
     ("temporadas_na_serie_a", "int64", "Int64.Type", "0", None),
     ("escudo", "string", "type text", None, None),
-    ("nome_tabela", "string", "type text", None, None),
 ]
 COLUNAS_JOGOS_B = [
     ("jogo_id", "string", "type text", None, None),
@@ -159,11 +158,17 @@ MEDIDAS = [
      "VAR sb = [Vantagem sem torcida Série B] VAR s = IF ( ISBLANK ( sa ), sb, sa ) "
      "RETURN IF ( ISBLANK ( a ) || ISBLANK ( s ), BLANK (), s - a )",
      "+0.00;-0.00;0.00", "Times",
-     "Como Variação sem torcida, mas os tradicionais da Série B usam a B sem torcida. O título e o -45% não usam esta."),
+     "Como Variação sem torcida, mas os tradicionais da Série B usam a B sem torcida. O -45% e o 0,44 não usam esta."),
+    ("Times que caíram na tabela",
+     "COUNTROWS ( FILTER ( VALUES ( times[time_id] ), [Variação na tabela] < 0 ) )",
+     "0", "Times", "Como Times que caíram, contando também os tradicionais da Série B (conferência: 20 de 25)."),
+    ("Times na tabela",
+     "COUNTROWS ( FILTER ( VALUES ( times[time_id] ), NOT ISBLANK ( [Variação na tabela] ) ) )",
+     "0", "Times", "Linhas da tabela por time: 21 da Série A e 4 tradicionais da Série B."),
     ("Barra da variação", "[Variação na tabela]", "+0.00;-0.00;0.00", "Times",
      "Mesma variação, só para desenhar a barra de dados (sem texto) ao lado do número."),
     ("Título dos times",
-     'FORMAT ( [Times que caíram], "0" ) & " de " & FORMAT ( [Times comparados], "0" ) '
+     'FORMAT ( [Times que caíram na tabela], "0" ) & " de " & FORMAT ( [Times na tabela], "0" ) '
      '& " times perderam força em casa"',
      None, "Times", "Título do gráfico por time, montado com as medidas (nenhum número digitado)."),
     ("Cor da temporada",
@@ -513,7 +518,7 @@ def pagina_principal() -> Pagina:
         "query": {
             "queryState": {"Values": {"projections": [
                 proj_coluna("times", "escudo", " "),
-                proj_coluna("times", "nome_tabela", "Time"),
+                proj_coluna("times", "nome", "Time"),
                 proj_medida("Variação na tabela", "Variação"),
                 proj_medida("Barra da variação", "caiu  ◀ │ ▶  subiu"),
             ]}},
@@ -532,7 +537,7 @@ def pagina_principal() -> Pagina:
             "total": props(totals=L("false")),
             "grid": props(gridHorizontal=L("true"), gridHorizontalColor=cor(BORDA), rowPadding=num(0),
                           imageHeight=num(19)),
-            "columnWidth": [largura("times.escudo", 36), largura("times.nome_tabela", 170),
+            "columnWidth": [largura("times.escudo", 36), largura("times.nome", 170),
                             largura("_Medidas.Variação na tabela", 90),
                             largura("_Medidas.Barra da variação", 240)],
             # Barra de dados nativa: zero no meio, vermelho à esquerda (caiu), verde à direita (subiu)
@@ -541,7 +546,7 @@ def pagina_principal() -> Pagina:
                     "positiveColor": cor(ALTA), "negativeColor": cor(QUEDA), "axisColor": cor(BRANCO),
                     "reverseDirection": L("false"), "hideText": L("true"), "totalMatchingOption": L("1L")}},
                 "selector": {"metadata": "_Medidas.Barra da variação"}}],
-        }}, {**cabecalho("x", "Sem torcida x 2015-2019 · (B) tradicionais que jogaram a Série B sem torcida"),
+        }}, {**cabecalho("x", "Clubes que jogaram com e sem torcida · sem torcida x 2015-2019"),
              "title": props(show=L("true"), text=titulo_times, fontColor=cor(BRANCO), fontSize=num(22),
                             bold=L("true"), titleWrap=L("true"))})
 
