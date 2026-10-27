@@ -10,11 +10,14 @@ Uso: python dashboards/powerbi/arte/gerar_arte.py
 """
 from __future__ import annotations
 
+import json
 import subprocess
 from pathlib import Path
 
 PASTA = Path(__file__).resolve().parent
 SAIDA = PASTA / "png"
+# Período da base (e a temporada em andamento) sai da análise, não do texto
+RESULTADOS = PASTA.parents[2] / "analise" / "resultados_fase1.json"
 EDGE = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
 
 NAVY, NAVY2, PAINEL = "#0B0D26", "#11143A", "#14173A"
@@ -117,12 +120,16 @@ body{{background:
 
 
 def titulo() -> None:
+    base = json.loads(RESULTADOS.read_text(encoding="utf-8"))["base"]
+    andam = base["em_andamento"]
+    parcial = (f" &nbsp;·&nbsp; {andam['temporada']} até a {andam['ultima_rodada']}ª rodada"
+               if andam else "")
     corpo = f"""<div style="display:flex;align-items:center;gap:26px;padding:6px 8px">
   <div style="border-radius:50%;box-shadow:0 0 0 4px {LIMAO},0 0 34px rgba(198,245,0,.45);line-height:0">{bola(BRANCO, NAVY, 100)}</div>
   <div>
-    <div style="font:700 19px/1 Inter;letter-spacing:.32em;color:{LIMAO}">BRASILEIRÃO SÉRIE A &nbsp;·&nbsp; 2003 A 2025</div>
+    <div style="font:700 19px/1 Inter;letter-spacing:.32em;color:{LIMAO}">BRASILEIRÃO SÉRIE A &nbsp;·&nbsp; {base["primeira_temporada"]} A {base["ultima_temporada"]}</div>
     <div class="larga" style="font-size:64px;line-height:.95;color:{BRANCO};margin-top:12px">MANDO DE CAMPO</div>
-    <div style="font:500 20px/1 Inter;color:#C9CCEA;margin-top:12px">Quanto vale jogar em casa, com e sem torcida</div>
+    <div style="font:500 20px/1 Inter;color:#C9CCEA;margin-top:12px">Quanto vale jogar em casa, com e sem torcida{parcial}</div>
   </div></div>"""
     render("titulo", corpo, 1000, 132)
     # Variante sem a bola, para quando a logo do campeonato estiver no cabeçalho

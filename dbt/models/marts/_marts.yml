@@ -83,7 +83,7 @@ models:
       - linhas_onde:
           name: conferencia_placar_ou_ausencia_diverge
           arguments:
-            condicao: "situacao <> 'confere'"
+            condicao: "situacao not in ('confere', 'pendente_na_fonte')"
           config:
             severity: warn
       - linhas_onde:
@@ -100,11 +100,13 @@ models:
             severity: warn
     columns:
       - name: situacao
-        description: "confere, placar_diverge, so_na_base, so_na_fonte ou nao_encerrado_na_fonte."
+        description: >
+          confere, placar_diverge, so_na_base, so_na_fonte, nao_encerrado_na_fonte
+          ou pendente_na_fonte (temporada em andamento, fonte ainda sem o resultado).
         data_tests:
           - accepted_values:
               arguments:
-                values: ['confere', 'placar_diverge', 'so_na_base', 'so_na_fonte', 'nao_encerrado_na_fonte']
+                values: ['confere', 'placar_diverge', 'so_na_base', 'so_na_fonte', 'nao_encerrado_na_fonte', 'pendente_na_fonte']
 
   - name: resumo_conferencia
     description: "Uma linha = uma fonte em uma temporada, com a contagem de cada tipo de divergência."

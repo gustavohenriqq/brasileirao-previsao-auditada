@@ -39,3 +39,11 @@ def test_ano_novo_dentro_da_temporada_e_jogo_sem_placar():
     assert ultimo["data"] == "2021-02-25"
     assert ultimo["rodada"] == 38
     assert ultimo["placar_mandante"] is None
+
+
+def test_anotacao_entre_colchetes_nao_entra_no_nome():
+    # 2026: "Chapecoense AF  v CR Vasco da Gama  [postponed]"
+    texto = "▪ Matchday 21\n  Wed Feb 25 2026\n    Chapecoense AF          v CR Vasco da Gama         [postponed]\n"
+    j = parse_openfootball(texto, 2026)[0]
+    assert (j["mandante"], j["visitante"]) == ("Chapecoense AF", "CR Vasco da Gama")
+    assert j["placar_mandante"] is None

@@ -6,7 +6,7 @@
 with outras as (
     select fonte, temporada, mandante_id, visitante_id, data
     from {{ ref('int_jogos__fontes') }}
-    where fonte <> 'adaoduque' and data is not null and encerrado
+    where fonte <> 'base' and data is not null and encerrado
 ),
 
 candidatas as (

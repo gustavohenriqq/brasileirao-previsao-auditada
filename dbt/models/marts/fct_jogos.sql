@@ -1,10 +1,11 @@
--- Uma linha = um jogo da Série A de 2003 a 2025, como na base (adaoduque).
+-- Uma linha = um jogo da Série A de 2003 a 2026, como na base (adaoduque até
+-- 2025; football-data.org em 2026, só os jogos encerrados, ver int_jogos__base).
 -- Odds de fechamento vêm do football-data.co.uk (2012 em diante) e o público
 -- da ESPN (2006 em diante); as duas entram por temporada + mandante + visitante.
 -- A data é a da base, exceto quando duas ou mais fontes concordam numa data
 -- a mais de 1 dia dela (ver int_datas__maioria); data_base guarda a original.
 with base as (
-    {{ juntar_de_para(ref('stg_adaoduque__jogos'), 'adaoduque') }}
+    select * from {{ ref('int_jogos__base') }}
 ),
 
 maioria as (
@@ -53,7 +54,7 @@ select
         when b.gols_mandante = b.gols_visitante then 'E'
         else 'V'
     end as resultado,
-    b.estadio,
+    coalesce(b.estadio, e.estadio) as estadio,
     e.publico as publico_espn,
     o.odd_pinnacle_mandante,
     o.odd_pinnacle_empate,

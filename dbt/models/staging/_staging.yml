@@ -40,9 +40,11 @@ models:
     data_tests:
       - linhas_onde:
           name: espn_jogo_nao_encerrado
-          description: "Esperado: o jogo cancelado de 2016 e um jogo de 2021 parado em segundo tempo."
+          description: >
+            Esperado: o jogo cancelado de 2016 e um jogo de 2021 parado em segundo
+            tempo. Jogos por disputar da temporada em andamento ficam de fora.
           arguments:
-            condicao: "status <> 'STATUS_FULL_TIME'"
+            condicao: "status <> 'STATUS_FULL_TIME' and temporada <> {{ var('temporada_em_andamento') }}"
           config:
             severity: warn
     columns:

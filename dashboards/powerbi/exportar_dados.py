@@ -25,7 +25,7 @@ with j as (
         case
             when m.periodo = 'com_torcida_antes' and m.temporada >= 2015 then 'Com torcida 2015-2019'
             when m.periodo = 'sem_torcida' then 'Sem torcida 2020-2021'
-            when m.periodo = 'com_torcida_depois' then 'Torcida voltou 2022-2025'
+            when m.periodo = 'com_torcida_depois' then 'Torcida voltou 2022-' || (select max(temporada) from marts.mando_jogos)
         end as periodo_painel,
         case
             when m.periodo = 'com_torcida_antes' and m.temporada >= 2015 then 1

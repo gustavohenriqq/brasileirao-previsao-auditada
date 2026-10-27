@@ -1,6 +1,7 @@
 # Conferência entre fontes
 
-Feita em 23/10/2026 sobre a base de 9.165 jogos (2003 a 2025).
+Feita em 23/10/2026 sobre a base de 9.165 jogos (2003 a 2025). A temporada
+2026, em andamento, foi conferida em 27/10/2026 (ver o fim do documento).
 
 ## Como
 
@@ -90,3 +91,30 @@ não há uma terceira fonte para 2005; fica registrado como limite.
   mesmo erro de uma origem comum. O RSSSF foi usado para desempatar os casos
   1 contra 1 e para conferir uma amostra das datas.
 - O RSSSF foi consultado à mão; não entra na ingestão.
+
+## Adendo de 27/10/2026: temporada 2026 em andamento
+
+A adaoduque (a base até 2025) ainda não tem 2026: o último commit do repositório
+é de 05/02/2026. A base de 2026 passou a ser o football-data.org, a única fonte
+atualizada que traz a rodada (modelo `int_jogos__base`). Entram só os jogos
+encerrados: 319, de 28/01 a 26/10/2026, até a 32ª rodada, com um jogo da 21ª
+adiado. Nessa temporada o football-data.org não entra também como conferência,
+porque seria a base conferindo a si mesma.
+
+| Fonte | Jogos da base | Conferem | Placar diverge | Pendente na fonte |
+|---|---|---|---|---|
+| football-data.co.uk | 319 | 319 (100%) | 0 | 0 |
+| ESPN | 319 | 319 (100%) | 0 | 0 |
+| openfootball | 319 | 277 | 0 | 42 |
+
+**Pendente na fonte** é uma situação nova: o jogo já foi disputado, mas a fonte
+ainda não lançou o placar (o openfootball é atualizado à mão, com atraso). Só
+vale para a temporada em andamento (`var temporada_em_andamento` no
+`dbt_project.yml`) e não conta como divergência. Pelo mesmo motivo, jogo
+futuro que a fonte já lista sem placar não aparece como "só na fonte".
+
+Para chegar aqui, quatro problemas de ingestão apareceram e foram corrigidos:
+colunas sem nome no `BRA.csv` novo do football-data.co.uk; a anotação
+`[postponed]` do openfootball entrando no nome do time; o jogo adiado e o
+remarcado listados juntos na ESPN (adiados saem no staging); e os nomes novos
+de Chapecoense e Remo no de-para.

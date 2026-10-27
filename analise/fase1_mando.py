@@ -46,6 +46,20 @@ def ler_jogos() -> dict[str, np.ndarray]:
     return d
 
 
+def ler_base() -> dict:
+    """Tamanho da base e a temporada em andamento (esperado vazio no seed)."""
+    with conectar() as con, con.cursor() as cur:
+        cur.execute("select count(*), min(temporada), max(temporada) from marts.fct_jogos")
+        jogos, primeira, ultima = cur.fetchone()
+        cur.execute("""
+            select temporada, jogos, rodadas from marts.dim_temporadas
+            where jogos_esperados is null
+        """)
+        andamento = [{"temporada": r[0], "jogos": r[1], "ultima_rodada": r[2]} for r in cur.fetchall()]
+    return {"jogos": jogos, "primeira_temporada": primeira, "ultima_temporada": ultima,
+            "em_andamento": andamento[0] if andamento else None}
+
+
 def ler_sql_por_periodo() -> dict[str, dict]:
     with conectar() as con, con.cursor() as cur:
         cur.execute("""
@@ -239,7 +253,7 @@ def por_temporada(d, rng) -> list[dict]:
     """Uma linha por temporada; 2021 dividido entre sem torcida e volta parcial."""
     v = (d["pm"] - d["pv"]).astype(float)
     saida = []
-    for t in range(2003, 2026):
+    for t in sorted(set(d["temporada"].tolist())):
         for p in PERIODOS:
             m = (d["temporada"] == t) & (d["periodo"] == p)
             if not m.any():
@@ -261,7 +275,7 @@ def conferir(res_periodos: dict, sql: dict) -> None:
     print("Conferência Python x SQL (marts.mando_por_periodo): ok")
 
 
-def grafico(serie: list[dict], tendencia: dict, destino: Path) -> None:
+def grafico(serie: list[dict], tendencia: dict, info: dict, destino: Path) -> None:
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -278,6 +292,8 @@ def grafico(serie: list[dict], tendencia: dict, destino: Path) -> None:
         t = s["temporada"]
         if s["periodo"] == "volta_parcial":
             rotulos.append("2021\n(volta)")
+        elif info["em_andamento"] and t == info["em_andamento"]["temporada"]:
+            rotulos.append(f"{t}\n(parcial)")
         else:
             rotulos.append(str(t))
 
@@ -286,7 +302,7 @@ def grafico(serie: list[dict], tendencia: dict, destino: Path) -> None:
     ax.set_facecolor(superficie)
 
     a = tendencia["inclinacao_por_ano"]
-    # reta de 2003 a 2019, prolongada (tracejada) até 2025
+    # reta de 2003 a 2019, prolongada (tracejada) até a última temporada
     temporadas = np.array([s["temporada"] for s in serie], dtype=float)
     base = [s for s in serie if s["periodo"] == "com_torcida_antes"]
     b = np.mean([s["vantagem_pontos"] for s in base]) - a * np.mean([s["temporada"] for s in base])
@@ -328,10 +344,14 @@ def grafico(serie: list[dict], tendencia: dict, destino: Path) -> None:
 
     fig.suptitle("Sem torcida, a vantagem do mandante caiu, mas não sumiu",
                  x=0.06, ha="left", fontsize=15, fontweight="bold", color=tinta)
-    ax.set_title("Série A, 2003 a 2025. Ponto: média da temporada. Barra: intervalo de 95% (bootstrap). "
-                 "2021 dividido: até a 22ª rodada sem torcida, depois a volta parcial.",
+    periodo = f"{info['primeira_temporada']} a {info['ultima_temporada']}"
+    andam = info["em_andamento"]
+    parcial = f" ({andam['temporada']} até a {andam['ultima_rodada']}ª rodada)" if andam else ""
+    ax.set_title(f"Série A, {periodo}{parcial}. Ponto: média da temporada. Barra: intervalo de 95% "
+                 "(bootstrap). 2021 dividido: até a 22ª rodada sem torcida, depois a volta parcial.",
                  loc="left", fontsize=9.5, color=tinta2, pad=10)
-    fig.text(0.06, 0.015, "Fonte: base histórica do projeto (9.165 jogos de 2003 a 2025, "
+    jogos = f"{info['jogos']:,}".replace(",", ".")
+    fig.text(0.06, 0.015, f"Fonte: base histórica do projeto ({jogos} jogos de {periodo}, "
              "conferida contra 5 fontes).", fontsize=8, color=tinta2)
     fig.subplots_adjust(left=0.06, right=0.98, top=0.86, bottom=0.12)
     destino.parent.mkdir(parents=True, exist_ok=True)
@@ -342,6 +362,7 @@ def grafico(serie: list[dict], tendencia: dict, destino: Path) -> None:
 def main() -> None:
     rng = np.random.default_rng(SEMENTE)
     d = ler_jogos()
+    base = ler_base()
     mascaras = {p: d["periodo"] == p for p in PERIODOS}
     recente = mascaras["com_torcida_antes"] & (d["temporada"] >= 2015)
 
@@ -353,12 +374,13 @@ def main() -> None:
         "gerado_por": "analise/fase1_mando.py",
         "semente": SEMENTE,
         "repeticoes_bootstrap": REPETICOES,
+        "base": base,
         "periodos": periodos,
         "diferencas_vantagem_pontos": {
             "sem_torcida_menos_2003_2019": diferenca(d, mascaras["com_torcida_antes"], mascaras["sem_torcida"], rng),
             "sem_torcida_menos_2015_2019": diferenca(d, recente, mascaras["sem_torcida"], rng),
-            "sem_torcida_menos_2022_2025": diferenca(d, mascaras["com_torcida_depois"], mascaras["sem_torcida"], rng),
-            "2022_2025_menos_2015_2019": diferenca(d, recente, mascaras["com_torcida_depois"], rng),
+            "sem_torcida_menos_torcida_voltou": diferenca(d, mascaras["com_torcida_depois"], mascaras["sem_torcida"], rng),
+            "torcida_voltou_menos_2015_2019": diferenca(d, recente, mascaras["com_torcida_depois"], rng),
         },
         "diferencas_saldo": {
             "sem_torcida_menos_2015_2019": diferenca(d, recente, mascaras["sem_torcida"], rng, campo="saldo"),
@@ -374,7 +396,7 @@ def main() -> None:
 
     destino = RAIZ / "analise" / "resultados_fase1.json"
     destino.write_text(json.dumps(resultado, ensure_ascii=False, indent=2), encoding="utf-8")
-    grafico(resultado["por_temporada"], resultado["contra_tendencia"],
+    grafico(resultado["por_temporada"], resultado["contra_tendencia"], base,
             RAIZ / "docs" / "img" / "fase1_vantagem_por_temporada.png")
     print(f"Resultados em {destino.relative_to(RAIZ)}")
 

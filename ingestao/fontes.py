@@ -12,12 +12,14 @@ import json
 import os
 import re
 
-from .comum import BRUTOS, TEMPORADAS, baixar, sha256
+from .comum import BRUTOS, TEMPORADA_EM_ANDAMENTO, TEMPORADAS, baixar, sha256
 
 # ---------------------------------------------------------------------------
 # 1. adaoduque/Brasileirao_Dataset (GitHub): a espinha da base, 2003 a 2025.
 #    CSV consolidado para 2003 a 2024 (datas dd/mm/aaaa, id estável) e o JSON
-#    da temporada para 2025, que ainda não entrou no CSV.
+#    da temporada para 2025, que ainda não entrou no CSV. Em 27/10/2026 o
+#    repositório não tinha 2026 (último commit em 05/02/2026): a base de 2026
+#    vem do football-data.org (fonte 6), ver dbt int_jogos__base.
 # ---------------------------------------------------------------------------
 ADAODUQUE = "https://raw.githubusercontent.com/adaoduque/Brasileirao_Dataset/master"
 
@@ -93,13 +95,18 @@ FDCOUK = "https://www.football-data.co.uk/new/BRA.csv"
 
 
 def fdcouk() -> tuple[list[str], list[dict]]:
-    arq = baixar(FDCOUK, BRUTOS / "football-data-co-uk" / "BRA.csv")
+    # Um arquivo só com todas as temporadas: atualiza junto com a em andamento.
+    arq = baixar(FDCOUK, BRUTOS / "football-data-co-uk" / "BRA.csv",
+                 refazer=TEMPORADA_EM_ANDAMENTO in TEMPORADAS)
     hash_ = sha256(arq)
     with arq.open(encoding="utf-8-sig") as f:
         leitor = csv.DictReader(f)
-        cols = [c.lower() for c in leitor.fieldnames]
+        # Em out/2026 o arquivo passou a trazer colunas vazias no fim do
+        # cabeçalho (vírgulas sobrando): ficam de fora.
+        cols = [c.lower() for c in leitor.fieldnames if c.strip()]
         linhas = [
-            {**{k.lower(): v for k, v in r.items()}, "_arquivo": arq.name, "_sha256": hash_}
+            {**{k.lower(): v for k, v in r.items() if k and k.strip()},
+             "_arquivo": arq.name, "_sha256": hash_}
             for r in leitor
         ]
     return cols, linhas
@@ -124,9 +131,12 @@ def espn(liga: str = "bra.1", pasta_nome: str = "espn", anos: range | None = Non
     url = ESPN.replace("bra.1", liga)
     linhas: list[dict] = []
     vistos: set[str] = set()
-    anos = anos or range(2006, max(TEMPORADAS) + 2)  # +1 ano civil: 2020 terminou em 2021
+    # +1 ano civil (2020 terminou em 2021), exceto depois da temporada em andamento
+    ultimo = max(TEMPORADAS) + (0 if max(TEMPORADAS) == TEMPORADA_EM_ANDAMENTO else 1)
+    anos = anos or range(2006, ultimo + 1)
     for ano in anos:
-        arq = baixar(f"{url}?dates={ano}&limit=1000", pasta / f"{ano}.json", pausa=0.5)
+        arq = baixar(f"{url}?dates={ano}&limit=1000", pasta / f"{ano}.json", pausa=0.5,
+                     refazer=ano == TEMPORADA_EM_ANDAMENTO and ano in temporadas)
         hash_ = sha256(arq)
         for e in json.loads(arq.read_text(encoding="utf-8")).get("events", []):
             temporada = e.get("season", {}).get("year")
@@ -169,7 +179,10 @@ _RE_DATA = re.compile(r"^\s{1,3}\w{3}\s+(\w{3})\s+(\d{1,2})(?:\s+(\d{4}))?\s*$")
 _RE_JOGO = re.compile(
     r"^\s+(?:(\d{1,2}[:.]\d{2})\s+)?(.+?)\s+v\s+(.+?)\s+(\d+)-(\d+)(?:\s+\(.*\))?\s*$"
 )
-_RE_JOGO_SEM_PLACAR = re.compile(r"^\s+(?:(\d{1,2}[:.]\d{2})\s+)?(.+?)\s+v\s+(.+?)\s*$")
+# Anotação no fim ("[postponed]", 2026) não faz parte do nome do visitante.
+_RE_JOGO_SEM_PLACAR = re.compile(
+    r"^\s+(?:(\d{1,2}[:.]\d{2})\s+)?(.+?)\s+v\s+(.+?)(?:\s+\[.*\])?\s*$"
+)
 
 
 def parse_openfootball(texto: str, temporada: int) -> list[dict]:
@@ -217,7 +230,8 @@ def openfootball(divisao: str = "br1", pasta_nome: str = "openfootball",
     linhas: list[dict] = []
     for temporada in temporadas or range(2018, max(TEMPORADAS) + 1):
         nome = f"{temporada}_{divisao}.txt"
-        arq = baixar(f"{OPENFOOTBALL}/{nome}", BRUTOS / pasta_nome / nome)
+        arq = baixar(f"{OPENFOOTBALL}/{nome}", BRUTOS / pasta_nome / nome,
+                     refazer=temporada == TEMPORADA_EM_ANDAMENTO)
         hash_ = sha256(arq)
         for j in parse_openfootball(arq.read_text(encoding="utf-8"), temporada):
             linhas.append({**j, "_arquivo": nome, "_sha256": hash_})
@@ -242,8 +256,9 @@ def openfootball_b() -> tuple[list[str], list[dict]]:
 
 # ---------------------------------------------------------------------------
 # 6. football-data.org (API v4, plano gratuito): Série A (código BSA).
-#    Testado em 23/10/2026: o plano gratuito libera 2023 a 2026 e devolve 403
-#    para 2022 e antes. 10 chamadas por minuto. Precisa de chave no .env.
+#    Base de 2026 (a adaoduque ainda não tem): é a única fonte atualizada que
+#    traz a rodada. Testado em 23/10/2026: o plano gratuito libera 2023 a 2026
+#    e devolve 403 para 2022 e antes. 10 chamadas por minuto. Precisa de chave no .env.
 # ---------------------------------------------------------------------------
 FDORG = "https://api.football-data.org/v4/competitions/BSA/matches"
 FDORG_TEMPORADAS = range(2023, max(TEMPORADAS) + 1)
@@ -263,7 +278,8 @@ def fdorg() -> tuple[list[str], list[dict]] | None:
     for temporada in FDORG_TEMPORADAS:
         arq = baixar(f"{FDORG}?season={temporada}",
                      BRUTOS / "football-data-org" / f"BSA-{temporada}.json",
-                     headers={"X-Auth-Token": chave}, pausa=6.5)
+                     headers={"X-Auth-Token": chave}, pausa=6.5,
+                     refazer=temporada == TEMPORADA_EM_ANDAMENTO)
         hash_ = sha256(arq)
         for m in json.loads(arq.read_text(encoding="utf-8"))["matches"]:
             linhas.append({

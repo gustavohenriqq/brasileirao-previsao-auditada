@@ -12,7 +12,9 @@ clean-targets: ["target", "dbt_packages"]
 
 vars:
   primeira_temporada: 2003
-  ultima_temporada: 2025
+  ultima_temporada: 2026
+  # Temporada ainda em disputa: entra só com os jogos encerrados.
+  temporada_em_andamento: 2026
 
 models:
   brasileirao:

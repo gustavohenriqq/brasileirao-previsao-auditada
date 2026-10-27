@@ -24,10 +24,17 @@ Denominador de todas as taxas: jogos disputados no período.
 | Com torcida, 2015 a 2019 | 1.899 | 50,3% | 26,1% | 23,6% | 1,77 / 0,97 | 0,80 (0,69 a 0,91) | 0,50 (0,44 a 0,57) |
 | **Sem torcida** | **594** | **42,4%** | **30,0%** | **27,6%** | **1,57 / 1,13** | **0,44 (0,24 a 0,64)** | **0,27 (0,15 a 0,39)** |
 | Volta parcial (out. a dez. 2021) | 166 | 56,0% | 25,9% | 18,1% | 1,94 / 0,80 | 1,14 (0,78 a 1,48) | 0,55 (0,33 a 0,77) |
-| Com torcida, 2022 a 2025 | 1.520 | 47,2% | 26,7% | 26,1% | 1,68 / 1,05 | 0,63 (0,51 a 0,75) | 0,42 (0,34 a 0,50) |
+| Com torcida, 2022 a 2026 (2026 até a 32ª rodada) | 1.839 | 47,3% | 26,9% | 25,8% | 1,69 / 1,04 | 0,64 (0,53 a 0,76) | 0,42 (0,34 a 0,49) |
 
 "Vantagem em pontos" = pontos do mandante menos pontos do visitante, por jogo.
 Vitória do mandante vale +3, empate 0, vitória do visitante -3.
+
+Por que a diferença e não só os pontos do mandante: qualquer time faz cerca de
+1,36 ponto por jogo (a média entre mandante e visitante), jogando onde for. Os
+pontos em casa somam essa parte fixa ao bônus de jogar em casa, e a torcida só
+mexe no bônus. Por isso "pontos em casa" caiu só 11% (1,77 para 1,57): mesmo
+que o mando sumisse por inteiro, ela cairia uns 24%. A diferença é o dobro do
+bônus e capta também o visitante, que melhorou sem torcida.
 
 Sem torcida, o mandante perdeu 0,20 ponto por jogo (1,77 para 1,57) e o
 visitante ganhou 0,16 (0,97 para 1,13). A vitória do mandante caiu de 50,3%
@@ -48,11 +55,11 @@ para 0,27 gol por jogo (queda de 0,23; intervalo de 0,10 a 0,37).
 
 ## O que não dá para afirmar
 
-- **Que o mando "voltou ao normal" depois.** De 2022 a 2025 a vantagem ficou em
-  0,63, abaixo dos 0,80 de 2015 a 2019 (diferença de 0,17, intervalo de 0,00 a
-  0,33, no limite). Mas está dentro do que a tendência de longo prazo previa
-  (0,11 abaixo dela, intervalo de -0,11 a 0,32). E a diferença entre sem torcida
-  e 2022 a 2025 (0,19) não é clara: o intervalo vai de -0,05 a 0,42.
+- **Que o mando "voltou ao normal" depois.** De 2022 a 2026 a vantagem ficou em
+  0,64, abaixo dos 0,80 de 2015 a 2019 (diferença de 0,16, intervalo de 0,00 a
+  0,32, no limite). Mas está dentro do que a tendência de longo prazo previa
+  (0,09 abaixo dela, intervalo de -0,11 a 0,29). E a diferença entre sem torcida
+  e 2022 a 2026 (0,20) não é clara: o intervalo vai de -0,03 a 0,43.
 - **Que a volta parcial teve mando mais forte.** Os 1,14 de outubro a dezembro
   de 2021 vêm de 166 jogos, com intervalo de 0,78 a 1,48, e de fim de
   temporada. Não sustenta conclusão.
@@ -102,7 +109,7 @@ Pela data, em `dbt/seeds/periodos_torcida.csv`:
 | Com torcida, antes | até 31/07/2020 | Temporadas 2003 a 2019 |
 | Sem torcida | 01/08/2020 a 30/09/2021 | Temporada 2020 inteira e 2021 até a 22ª rodada |
 | Volta parcial | 01/10/2021 a 31/12/2021 | A CBF liberou público a partir da 23ª rodada de 2021, com limite de capacidade e exceções (Bahia; clubes paulistas só depois de 04/10) |
-| Com torcida, depois | 2022 a 2025 | Temporadas completas com público |
+| Com torcida, depois | 2022 a 2026 | Temporadas com público (2026 em andamento, só jogos encerrados) |
 
 Os dados confirmam o corte: o público da ESPN é zero em todos os jogos de 2020 e
 de 2021 até setembro, e aparece a partir de 02/10/2021. A única exceção é
@@ -132,8 +139,26 @@ de outubro caem na volta parcial, que fica fora da comparação principal.
 | Vitória do mandante 50,3% para 42,4% | `taxa_vitoria_mandante` nos dois períodos |
 | 17 de 21 times caíram | `mesmo_time.times_com_queda` e `mesmo_time.times` |
 | 0,31 abaixo da tendência | `contra_tendencia.periodos.sem_torcida` |
-| 9.165 jogos, 5 fontes | Fase 0, `docs/conferencia.md` |
+| 9.484 jogos, 5 fontes | `base.jogos` no JSON; Fase 0, `docs/conferencia.md` |
 
 **Não usar:** os 0,82 de 2003 a 2019 como "antes" no título (a comparação justa
 é com 2015 a 2019, mesma época); os 1,14 da volta parcial como "o mando voltou
-mais forte"; "o mando voltou ao normal" para 2022 a 2025.
+mais forte"; "o mando voltou ao normal" para 2022 a 2026.
+
+## Atualização de 27/10/2026: 2026 entra na base
+
+Os 319 jogos de 2026 encerrados até a 32ª rodada entraram no período "com
+torcida, depois". Os números principais não mudam (0,80 para 0,44, queda de
+45%, 17 de 21 times). Muda só o período depois da volta da torcida:
+
+| Número | Antes (2022 a 2025) | Agora (2022 a 2026) |
+|---|---|---|
+| Jogos | 1.520 | 1.839 |
+| Vantagem | 0,63 (0,51 a 0,75) | 0,64 (0,53 a 0,76) |
+| Diferença contra 2015 a 2019 | 0,17 (0,00 a 0,33) | 0,16 (0,00 a 0,32) |
+| Contra a tendência | 0,11 abaixo (-0,11 a 0,32) | 0,09 abaixo (-0,11 a 0,29) |
+| Sem torcida contra depois | 0,19 (-0,05 a 0,42) | 0,20 (-0,03 a 0,43) |
+
+As conclusões dessa parte continuam as mesmas. As chaves do JSON foram
+renomeadas de `..._2022_2025` para `sem_torcida_menos_torcida_voltou` e
+`torcida_voltou_menos_2015_2019`, para não mudarem a cada temporada.

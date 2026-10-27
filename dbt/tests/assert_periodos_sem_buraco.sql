@@ -1,4 +1,4 @@
--- Os períodos de torcida cobrem 2003 a 2025 sem buraco nem sobreposição:
+-- Os períodos de torcida cobrem 2003 a 2026 sem buraco nem sobreposição:
 -- cada período começa no dia seguinte ao fim do anterior.
 select periodo, inicio, anterior_fim
 from (

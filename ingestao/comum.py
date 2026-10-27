@@ -22,7 +22,11 @@ BRUTOS = RAIZ / "dados" / "brutos"
 
 load_dotenv(RAIZ / ".env")
 
-TEMPORADAS = range(2003, 2026)  # 2003 a 2025, a base histórica da Fase 0
+TEMPORADAS = range(2003, 2027)  # 2003 a 2026; 2026 ainda em andamento
+
+# A temporada em andamento muda a cada rodada: os arquivos dela são baixados
+# de novo em toda carga, em vez de vir do cache.
+TEMPORADA_EM_ANDAMENTO = 2026
 
 USER_AGENT = "projeto-brasileirao/0.1 (estudo, github.com/gustavohenriqq)"
 
@@ -69,6 +73,8 @@ def carregar_raw(tabela: str, colunas: list[str], linhas: list[dict]) -> int:
     """Recria raw.<tabela> com todas as colunas em texto e carrega por COPY.
 
     Carga full e transacional: ou a tabela inteira é trocada, ou nada muda.
+    O cascade derruba as views do dbt que leem a tabela; rode `dbt build`
+    depois da carga para recriá-las.
     """
     todas = colunas + ["_arquivo", "_sha256"]
     defs = ", ".join(f'"{c}" text' for c in todas)
@@ -81,7 +87,7 @@ def carregar_raw(tabela: str, colunas: list[str], linhas: list[dict]) -> int:
     buf.seek(0)
     with conectar() as con, con.cursor() as cur:
         cur.execute("create schema if not exists raw")
-        cur.execute(f"drop table if exists raw.{tabela}")
+        cur.execute(f"drop table if exists raw.{tabela} cascade")
         cur.execute(
             f"create table raw.{tabela} ({defs}, "
             "_carregado_em timestamptz not null default now())"

@@ -281,7 +281,7 @@ ref table _Medidas
         "jogos_time", "jogos_time.csv", COLUNAS_JOGOS, ["periodo_painel", "periodo_painel_ordem"],
         "Um time em um jogo: cada jogo tem duas linhas (Casa e Fora)."), encoding="utf-8")
     (d / "tables" / "times.tmdl").write_text(tmdl_tabela_csv(
-        "times", "times.csv", COLUNAS_TIMES, [], "Clubes da Série A de 2003 a 2025."), encoding="utf-8")
+        "times", "times.csv", COLUNAS_TIMES, [], "Clubes da Série A de 2003 a 2026."), encoding="utf-8")
     (d / "tables" / "jogos_time_b.tmdl").write_text(tmdl_tabela_csv(
         "jogos_time_b", "jogos_time_b.csv", COLUNAS_JOGOS_B, [],
         "Série B sem torcida dos clubes tradicionais (Cruzeiro, Vitória, Figueirense, Ponte Preta)."),
@@ -508,7 +508,7 @@ def pagina_principal() -> Pagina:
             "labels": props(show=L("true"), color=cor(BRANCO), fontSize=num(28), labelDisplayUnits=num(1),
                             labelPrecision=L("2L"), labelPosition=txt("OutsideEnd")),
         }}, cabecalho("Com torcida x sem torcida", "Pontos por jogo em casa menos fora, por período"))
-    pg.imagem("adesivo", "adesivo_sem_torcida.png", 842, 388, 130, 56)  # legenda das colunas limão (2020 e 2021)
+    pg.imagem("adesivo", "adesivo_sem_torcida.png", 824, 398, 118, 51)  # legenda das colunas limão (2020 e 2021)
 
     # Coluna da direita: cada time contra ele mesmo, uma linha por time (escudo, nome, número e barra)
     titulo_times = {"expr": medida_ref("Título dos times")}

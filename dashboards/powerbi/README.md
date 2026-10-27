@@ -2,7 +2,8 @@
 
 ![Painel](../../docs/img/painel_mando_de_campo.png)
 
-Uma página (1920 x 1080) sobre a base histórica da Série A de 2003 a 2025:
+Uma página (1920 x 1080) sobre a base da Série A de 2003 a 2026 (2026 em
+andamento, até a 32ª rodada):
 cartões de KPI, a vantagem do mandante por temporada com os jogos sem torcida
 em limão, a comparação com torcida x sem torcida, quem vence os jogos por
 período e, na coluna da direita, 25 clubes que jogaram com e sem torcida,
@@ -29,8 +30,10 @@ medida DAX, e as medidas são conferidas contra o SQL e contra
 .venv\Scripts\python dashboards\powerbi\gerar_pbip.py          # Brasileirao.pbip
 ```
 
-Abra `Brasileirao.pbip` no Power BI Desktop e clique em Atualizar. Com o
-arquivo aberto, confira os números:
+Abra `Brasileirao.pbip` no Power BI Desktop e clique em Atualizar > Dados (na
+faixa de opções). O botão "Atualizar agora" da barra amarela, que aparece
+depois de aplicar alterações externas, recarrega o relatório mas não os CSVs.
+Com o arquivo aberto, confira os números:
 
 ```powershell
 .venv\Scripts\python dashboards\powerbi\tools\conferir_painel.py
@@ -75,6 +78,16 @@ arquivo aberto, confira os números:
   verde não cobrir o texto.
 - **Exportar PDF logo depois de aplicar alterações externas** pode sair com os
   visuais encolhidos no canto. Ajuste à página e exporte de novo.
+- **Dados velhos depois de regerar** (27/10/2026). Com os CSVs de 2026 já
+  exportados, o painel continuou com 9.165 jogos depois de "Atualizar agora".
+  Só Atualizar > Dados, na faixa de opções, recarregou os CSVs.
+- **Instância errada na conferência.** Com mais de uma janela do Desktop
+  aberta, `tools/consultar.ps1` pegava uma instância vazia e o
+  `conferir_painel.py` quebrava. Agora ele tenta cada instância, da mais nova
+  para a mais antiga, e usa a primeira que responde.
+- **Adesivo em cima do rótulo.** Com a barra de 2026, as colunas do gráfico por
+  temporada mudaram de lugar e o adesivo "sem torcida" passou a cobrir o 1,14
+  de 2021. Foi para a esquerda, sobre as colunas de 2020 e 2021 sem torcida.
 
 ## Conferência
 
@@ -88,3 +101,8 @@ Postgres está no ar.
 Em 24/10/2026, com os tradicionais da Série B: `conferir_painel.py` passou nas
 17 conferências (as 11 de antes, "20 de 25" na tabela e a variação de cada um
 dos 4 clubes contra `tradicionais_serie_b` do JSON).
+
+Em 27/10/2026, com 2026 até a 32ª rodada: as mesmas 17 conferências passaram,
+com 9.484 jogos. O título e o período "Torcida voltou 2022-2026" saem dos dados
+(`exportar_dados.py` e `gerar_arte.py` leem a última temporada), não de texto
+fixo.

@@ -60,6 +60,7 @@ def linha(rotulo: str, anos: str, m: dict, cor: str, cheio: bool, fantasma: dict
         <div class="barra {cor}" style="width:{w(v)}"></div>
         <div class="ic" style="left:{w(lo)};width:{w(hi - lo)}"></div>
         <div class="valor" style="left:calc({w(max(hi, fantasma['referencia'] if fantasma else hi))} + 18px)">+{br(v)}</div>
+        <div class="detalhe">mandante <b>{br(m["pontos_por_jogo_mandante"])}</b> &nbsp;&middot;&nbsp; visitante <b>{br(m["pontos_por_jogo_visitante"])}</b> ponto/jogo</div>
       </div>
     </div>"""
 
@@ -71,6 +72,11 @@ def montar_html(r: dict) -> str:
     queda = dif["queda_relativa"]
     mt = r["mesmo_time"]
     tend = r["contra_tendencia"]["periodos"]["sem_torcida"]
+    base = r["base"]
+    ultima = base["ultima_temporada"]
+    andam = base["em_andamento"]
+    parcial = f"; {andam['temporada']} até a {andam['ultima_rodada']}ª rodada" if andam else ""
+    jogos = f"{base['jogos']:,}".replace(",", ".")
 
     # Conferências de coerência antes de desenhar (o card não pode contradizer o JSON).
     assert sem["ic95"]["vantagem_pontos"][0] > 0, "o IC sem torcida toca o zero: o título 'não sumiu' cairia"
@@ -86,7 +92,7 @@ def montar_html(r: dict) -> str:
         linha("Com torcida", "2015 a 2019", antes, "azul", True)
         + linha("Sem torcida", "2020 e 2021", sem, "magenta", False,
                 fantasma={"referencia": antes["vantagem_pontos"], "texto": f"&minus;{pct(queda)}"})
-        + linha("Torcida voltou", "2022 a 2025", depois, "azul", True)
+        + linha("Torcida voltou", f"2022 a {ultima}", depois, "azul", True)
     )
 
     return f"""<!doctype html>
@@ -140,6 +146,8 @@ h1 em {{ font-style:normal; color:var(--ouro-claro); }}
 .ic::before, .ic::after {{ content:''; position:absolute; top:-8px; width:3px; height:19px; background:rgba(255,255,255,.85); border-radius:2px; }}
 .ic::before {{ left:-1px; }} .ic::after {{ right:-1px; }}
 .valor {{ position:absolute; top:50%; transform:translateY(-50%); font:900 40px/1 Archivo; color:var(--branco); letter-spacing:-.01em; white-space:nowrap; }}
+.detalhe {{ position:absolute; left:0; top:calc(100% + 12px); font:500 16px/1 'JetBrains Mono'; color:var(--apagado); white-space:nowrap; }}
+.detalhe b {{ color:var(--texto); font-weight:700; }}
 .fantasma {{
   position:absolute; top:0; height:100%; border:2px dashed rgba(240,180,58,.75); border-left:none;
   border-radius:0 12px 12px 0; background:repeating-linear-gradient(135deg, rgba(240,180,58,.10) 0 8px, transparent 8px 16px);
@@ -187,7 +195,7 @@ h1 em {{ font-style:normal; color:var(--ouro-claro); }}
   </div>
 
   <div class="rodape">
-    <span>9.165 jogos da Série A (2003 a 2025), conferidos em 5 fontes.<br>Traço branco: intervalo de confiança de 95%.</span>
+    <span>{jogos} jogos da Série A ({base["primeira_temporada"]} a {ultima}{parcial}), conferidos em 5 fontes.<br>Traço branco: intervalo de confiança de 95%.</span>
     <span class="assina">
       <svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="#C98500" stroke-width="2">
         <circle cx="5" cy="13" r="3" fill="#C98500"/><circle cx="21" cy="5" r="3" fill="#C98500"/><circle cx="21" cy="21" r="3" fill="#C98500"/>

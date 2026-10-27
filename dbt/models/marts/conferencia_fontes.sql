@@ -7,11 +7,11 @@ with jogos as (
 ),
 
 base as (
-    select * from jogos where fonte = 'adaoduque'
+    select * from jogos where fonte = 'base'
 ),
 
 outras as (
-    select * from jogos where fonte <> 'adaoduque'
+    select * from jogos where fonte <> 'base'
 ),
 
 cobertura as (
@@ -50,6 +50,10 @@ comparado as (
         case
             when b.temporada is null then 'so_na_fonte'
             when o.temporada is null then 'so_na_base'
+            -- Temporada em andamento: a fonte ainda não atualizou o jogo.
+            -- Muda a cada rodada e não é divergência.
+            when not o.encerrado
+                and b.temporada = {{ var('temporada_em_andamento') }} then 'pendente_na_fonte'
             when not o.encerrado then 'nao_encerrado_na_fonte'
             when (b.gols_mandante, b.gols_visitante)
                 is distinct from (o.gols_mandante, o.gols_visitante) then 'placar_diverge'
@@ -65,7 +69,9 @@ comparado as (
 
 select
     c.*,
-    abs(c.data_base - c.data_fonte) as diferenca_dias,
+    -- Data de jogo pendente é a marcação antiga: não entra na comparação.
+    case when c.situacao <> 'pendente_na_fonte' then abs(c.data_base - c.data_fonte) end
+        as diferenca_dias,
     case
         when c.rodada_base is null or c.rodada_fonte is null then null
         else c.rodada_base = c.rodada_fonte
@@ -77,3 +83,10 @@ left join {{ ref('divergencias_explicadas') }} as e
     and e.temporada = c.temporada
     and e.mandante_id = c.mandante_id
     and e.visitante_id = c.visitante_id
+-- Na temporada em andamento, os jogos ainda por disputar só existem nas
+-- fontes: não são divergência.
+where not (
+    c.situacao = 'so_na_fonte'
+    and not c.encerrado_na_fonte
+    and c.temporada = {{ var('temporada_em_andamento') }}
+)

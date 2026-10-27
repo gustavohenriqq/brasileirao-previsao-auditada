@@ -46,6 +46,19 @@
             "width": 234
           },
           "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 802,
+            "y": 27
+          },
+          "nodeIndex": "jogos_time_b",
+          "nodeLineageTag": "c8b2a57a-1580-5100-9367-6e734740a40c",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
         }
       ],
       "name": "Todas as tabelas",

@@ -7,9 +7,9 @@ checagens: contra a tendência histórica, dentro do mesmo time (17 de 21 times
 caíram) e reamostrando rodadas inteiras. Detalhes em
 [docs/fase1-mando-de-campo.md](docs/fase1-mando-de-campo.md).
 
-A base por trás: 9.165 jogos de 2003 a 2025 conferidos contra 5 fontes
-independentes. Nos 17 placares em que uma fonte discordou, a base estava
-certa; nas datas, quem errou foi a base, em 28 jogos.
+A base por trás: 9.484 jogos de 2003 a 2026 (2026 até a 32ª rodada)
+conferidos contra 5 fontes independentes. Nos 17 placares em que uma fonte
+discordou, a base estava certa; nas datas, quem errou foi a base, em 28 jogos.
 
 O objetivo do projeto é publicar as probabilidades de cada jogo da Série A de
 2027 **antes** da rodada, com registro datado no GitHub, e depois dar nota ao
@@ -27,6 +27,11 @@ está em [BRIEF.md](BRIEF.md).
   [docs/fontes.md](docs/fontes.md) (cobertura, licença e limite de cada uma).
 - Conferência entre fontes com todas as divergências registradas e explicadas
   em [docs/conferencia.md](docs/conferencia.md).
+- **Atualização de 27/10/2026: 2026 em andamento.** A adaoduque ainda não tem
+  2026, então a base desse ano é o football-data.org (319 jogos encerrados, até
+  a 32ª rodada, com um jogo da 21ª adiado), conferido pela ESPN e pelo
+  football-data.co.uk em todos os 319. Total: 9.484 jogos. Os arquivos da
+  temporada em andamento são baixados de novo a cada carga.
 
 **Fase 1: mando de campo sem torcida** (23/10/2026)
 
@@ -46,8 +51,8 @@ números conferidos contra o JSON da análise. Ver
 
 ![Painel](docs/img/painel_mando_de_campo.png)
 
-**Testes:** dbt com 76 testes de dados (71 passam, 5 avisos propositais
-explicados abaixo) e 3 testes de unidade do parser.
+**Testes:** dbt com 93 testes de dados (87 passam, 6 avisos propositais
+explicados abaixo) e 4 testes de unidade do parser.
 
 Fases 2 (modelos e backtest) e 3 (automação para 2027) ainda não começaram.
 
@@ -61,10 +66,11 @@ raw.<fonte>_jogos            6 tabelas, uma por fonte
    │  dbt
    ▼
 staging.stg_<fonte>__jogos   tipos e datas, uma view por fonte
+intermediate.int_jogos__base     a base: adaoduque até 2025, football-data.org em 2026
 intermediate.int_jogos__fontes   todas as fontes no mesmo formato, com o id do time
 intermediate.int_datas__maioria  data mais apoiada pelas fontes
    ▼
-marts.fct_jogos              um jogo por linha, 2003 a 2025
+marts.fct_jogos              um jogo por linha, 2003 a 2026 (2026 só jogos encerrados)
 marts.dim_times / dim_temporadas
 marts.conferencia_fontes     jogo da base x cada fonte, com a explicação da divergência
 marts.resumo_conferencia     uma fonte por temporada
@@ -78,10 +84,10 @@ analise/resultados_fase1.json + docs/img/fase1_vantagem_por_temporada.png
 |---|---|---|
 | adaoduque/Brasileirao_Dataset | 2003 a 2025 | Espinha da base (única com tudo e com rodada) |
 | Mendeley Data (CC BY 4.0) | 2003 a 2019 | Conferência, única para 2003 a 2005 |
-| football-data.co.uk | 2012 a 2025 | Conferência e odds de fechamento |
-| ESPN (API JSON pública) | 2006 a 2025 | Conferência e público |
-| openfootball (CC0) | 2018 a 2025 | Conferência de placar e rodada |
-| football-data.org (plano gratuito) | 2023 a 2025 | Conferência; rodadas de 2027 na Fase 3 |
+| football-data.co.uk | 2012 a 2026 | Conferência e odds de fechamento |
+| ESPN (API JSON pública) | 2006 a 2026 | Conferência e público |
+| openfootball (CC0) | 2018 a 2026 | Conferência de placar e rodada |
+| football-data.org (plano gratuito) | 2023 a 2026 | Base de 2026 (única atualizada com rodada); conferência antes disso; rodadas de 2027 na Fase 3 |
 
 ## Como rodar
 
@@ -117,7 +123,7 @@ Windows pode bloquear o `dbt.exe`. Os arquivos baixados ficam em
 | Toda divergência tem explicação | `assert_divergencia_explicada` (aviso) |
 | Odds do football-data.co.uk casam com algum jogo | `assert_odds_casam_com_jogos` |
 
-Os 5 avisos esperados hoje:
+Os 6 avisos esperados hoje:
 
 | Aviso | Linhas | Por quê |
 |---|---|---|
@@ -126,6 +132,10 @@ Os 5 avisos esperados hoje:
 | `espn_jogo_nao_encerrado` | 2 | O jogo cancelado de 2016 e um jogo de 2021 parado em "segundo tempo" |
 | `not_null_stg_fdcouk__jogos_gols_mandante` | 1 | O jogo não disputado de 2016, sem placar |
 | `mando_sem_torcida_com_publico` | 1 | Chapecoense x Palmeiras, 18/09/2021, 115 pessoas, antes da liberação do público na 23ª rodada |
+| `serie_b_publico_no_periodo_sem_torcida` | 20 | Série B: o público voltou antes (jul. a set. de 2021); esses jogos saem da comparação dos tradicionais |
+
+Em 2026, jogo que a fonte ainda não atualizou fica como `pendente_na_fonte`
+(42 no openfootball em 27/10) e não conta como divergência nem como aviso.
 
 ## Diário de bordo
 
@@ -152,6 +162,18 @@ Erros e achados, na ordem em que apareceram:
 - **Gráfico com rótulos sobrepostos.** A primeira versão tinha os dois pedaços
   de 2021 com rótulos encavalados e a legenda em cima de uma barra; corrigido
   olhando a imagem antes de publicar.
+- **2026 entrou e quebrou cinco coisas** (27/10/2026). O `BRA.csv` novo do
+  football-data.co.uk veio com colunas sem nome no cabeçalho (identificador
+  vazio no Postgres); o openfootball anota jogo adiado como `[postponed]` e a
+  anotação virou parte do nome do time (teste de unidade novo); a ESPN lista o
+  jogo adiado e o remarcado, o que duplicava o confronto (adiados saem no
+  staging); Chapecoense e Remo voltaram com nomes novos em três fontes
+  (de-para); e jogos ainda não atualizados nas fontes viraram dezenas de
+  avisos falsos, até ganharem a situação `pendente_na_fonte`.
+- **Número que só a análise via.** Com 2026, o período "torcida voltou" passou
+  de 2022 a 2025 para 2022 a 2026: 1.520 para 1.839 jogos e vantagem de 0,63
+  para 0,64. O título, o card e o painel passaram a ler o período do JSON em
+  vez de ter "2025" digitado.
 
 ## Regras do projeto
 

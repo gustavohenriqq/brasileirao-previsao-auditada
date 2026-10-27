@@ -18,3 +18,6 @@ select
     _arquivo as arquivo,
     _carregado_em as carregado_em
 from {{ source('raw', 'espn_jogos') }}
+-- Jogo adiado fica como evento à parte e a remarcação ganha outro id
+-- (2026: três pares em dobro). O adiado sai; o jogo vale pela remarcação.
+where status <> 'STATUS_POSTPONED'
