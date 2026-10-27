@@ -2,9 +2,18 @@
 
 **Sem torcida, a vantagem do mandante na Série A caiu quase pela metade, mas
 não sumiu: de 0,80 ponto por jogo a mais que o visitante (2015 a 2019) para
-0,44 nos 594 jogos sem público de 2020 e 2021.** A queda passa em três
-checagens: contra a tendência histórica, dentro do mesmo time (17 de 21 times
-caíram) e reamostrando rodadas inteiras. Detalhes em
+0,44 nos 594 jogos sem público (ago/2020 a set/2021), queda de 45%.** A
+vitória do mandante foi de 50,3% para 42,4%, e a tendência histórica previa
+0,76, não 0,44. Com a torcida de volta (2022 a 2026), a vantagem ficou em 0,64.
+
+![Painel](docs/img/painel_mando_de_campo.png)
+
+No painel, a tabela por time diz "20 de 25" porque soma aos 21 clubes da
+Série A 4 tradicionais que jogaram sem torcida na Série B; a análise principal
+usa só a Série A, onde 17 de 21 times perderam força em casa.
+
+A queda passa em três checagens: contra a tendência histórica, dentro do mesmo
+time e reamostrando rodadas inteiras. Detalhes em
 [docs/fase1-mando-de-campo.md](docs/fase1-mando-de-campo.md).
 
 A base por trás: 9.484 jogos de 2003 a 2026 (2026 até a 32ª rodada)
@@ -46,10 +55,8 @@ está em [BRIEF.md](BRIEF.md).
   a partir do JSON (precisa do Edge ou do Chrome para renderizar).
 
 **Painel Power BI** (23/10/2026): uma página gerada por script, com os
-números conferidos contra o JSON da análise. Ver
+números conferidos contra o JSON da análise (a imagem está no topo). Ver
 [dashboards/powerbi/README.md](dashboards/powerbi/README.md).
-
-![Painel](docs/img/painel_mando_de_campo.png)
 
 **Testes:** dbt com 93 testes de dados (87 passam, 6 avisos propositais
 explicados abaixo) e 4 testes de unidade do parser.

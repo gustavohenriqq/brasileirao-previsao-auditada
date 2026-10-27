@@ -139,6 +139,9 @@ de outubro caem na volta parcial, que fica fora da comparação principal.
 | Vitória do mandante 50,3% para 42,4% | `taxa_vitoria_mandante` nos dois períodos |
 | 17 de 21 times caíram | `mesmo_time.times_com_queda` e `mesmo_time.times` |
 | 0,31 abaixo da tendência | `contra_tendencia.periodos.sem_torcida` |
+| Tendência previa 0,76 sem torcida | `contra_tendencia.periodos.sem_torcida.esperado_pela_tendencia` |
+| 0,64 com a torcida de volta (2022 a 2026) | `periodos.com_torcida_depois.vantagem_pontos` |
+| 20 de 25 no painel (21 da Série A + 4 tradicionais da Série B) | `mesmo_time` + bloco `tradicionais_serie_b`; `dashboards/powerbi/README.md` |
 | 9.484 jogos, 5 fontes | `base.jogos` no JSON; Fase 0, `docs/conferencia.md` |
 
 **Não usar:** os 0,82 de 2003 a 2019 como "antes" no título (a comparação justa
