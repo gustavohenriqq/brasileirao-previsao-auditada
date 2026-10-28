@@ -127,7 +127,7 @@ def titulo() -> None:
     corpo = f"""<div style="display:flex;align-items:center;gap:26px;padding:6px 8px">
   <div style="border-radius:50%;box-shadow:0 0 0 4px {LIMAO},0 0 34px rgba(198,245,0,.45);line-height:0">{bola(BRANCO, NAVY, 100)}</div>
   <div>
-    <div style="font:700 19px/1 Inter;letter-spacing:.32em;color:{LIMAO}">BRASILEIRÃO SÉRIE A &nbsp;·&nbsp; {base["primeira_temporada"]} A {base["ultima_temporada"]}</div>
+    <div style="font:700 19px/1 Inter;letter-spacing:.32em;color:{LIMAO}">BRASILEIRÃO &nbsp;·&nbsp; {base["primeira_temporada"]} A {base["ultima_temporada"]}</div>
     <div class="larga" style="font-size:64px;line-height:.95;color:{BRANCO};margin-top:12px">MANDO DE CAMPO</div>
     <div style="font:500 20px/1 Inter;color:#C9CCEA;margin-top:12px">Quanto vale jogar em casa, com e sem torcida{parcial}</div>
   </div></div>"""
