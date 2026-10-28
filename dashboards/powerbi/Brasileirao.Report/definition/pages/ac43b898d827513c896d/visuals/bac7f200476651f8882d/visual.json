@@ -23,12 +23,12 @@
                       "Entity": "_Medidas"
                     }
                   },
-                  "Property": "Mando sem torcida"
+                  "Property": "Variação da vantagem sem torcida"
                 }
               },
-              "queryRef": "_Medidas.Mando sem torcida",
-              "nativeQueryRef": "Mando sem torcida",
-              "displayName": "Mando sem torcida"
+              "queryRef": "_Medidas.Variação da vantagem sem torcida",
+              "nativeQueryRef": "Variação da vantagem sem torcida",
+              "displayName": "Vantagem sem torcida"
             }
           ]
         }

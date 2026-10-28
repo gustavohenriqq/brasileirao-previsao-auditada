@@ -96,7 +96,8 @@ def anexar_escudos(arquivo: Path) -> int:
 
     O Power BI mostra a imagem na tabela quando a coluna é marcada como URL de
     imagem. Cada escudo vai sobre um círculo branco, para os escuros não sumirem
-    no fundo navy. Escudos em arte/escudos (baixar_escudos.py).
+    no fundo navy, com margem transparente em volta para o círculo não encostar
+    nas linhas da tabela. Escudos em arte/escudos (baixar_escudos.py).
     """
     import base64
     import io
@@ -111,10 +112,10 @@ def anexar_escudos(arquivo: Path) -> int:
         png = pasta / f"{linha['time_id']}.png"
         linha["escudo"] = ""
         if png.exists():
-            disco = Image.new("RGBA", (72, 72), (0, 0, 0, 0))
-            ImageDraw.Draw(disco).ellipse((0, 0, 71, 71), fill=(255, 255, 255, 255))
+            disco = Image.new("RGBA", (88, 88), (0, 0, 0, 0))
+            ImageDraw.Draw(disco).ellipse((8, 8, 79, 79), fill=(255, 255, 255, 255))
             escudo = Image.open(png).convert("RGBA").resize((52, 52), Image.LANCZOS)
-            disco.alpha_composite(escudo, (10, 10))
+            disco.alpha_composite(escudo, (18, 18))
             buf = io.BytesIO()
             disco.save(buf, format="PNG", optimize=True)
             linha["escudo"] = "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode()

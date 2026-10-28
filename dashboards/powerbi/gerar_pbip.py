@@ -118,7 +118,7 @@ MEDIDAS = [
      f'CALCULATE ( [Vantagem do mandante], {SEM_TEMPORADA}, {SEM_PERIODO}, '
      'jogos_time[periodo_painel] = "Sem torcida 2020-2021" )',
      "0.00", "Mando", "Ago/2020 a set/2021. Ignora o filtro de temporada."),
-    ("Mando sem torcida", "DIVIDE ( [Vantagem sem torcida], [Vantagem com torcida 2015-2019] ) - 1",
+    ("Variação da vantagem sem torcida", "DIVIDE ( [Vantagem sem torcida], [Vantagem com torcida 2015-2019] ) - 1",
      "+0%;-0%;0%", "KPI", "Variação da vantagem do mandante sem torcida contra 2015 a 2019."),
     ("Vantagem por período",
      f"IF ( ISBLANK ( SELECTEDVALUE ( jogos_time[periodo_painel] ) ), BLANK (), "
@@ -448,7 +448,7 @@ def pagina_principal() -> Pagina:
         ("Vitórias do mandante", "Vitórias do mandante", "icone_vitorias.png", BRANCO),
         ("Pontos por jogo em casa", "Pontos/jogo em casa", "icone_casa.png", BRANCO),
         ("Pontos por jogo fora", "Pontos/jogo fora", "icone_fora.png", BRANCO),
-        ("Mando sem torcida", "Mando sem torcida", "icone_sem_torcida.png", LIMAO),
+        ("Variação da vantagem sem torcida", "Vantagem sem torcida", "icone_sem_torcida.png", LIMAO),
     ]
     w, gap, x0, y = 294, 15, 40, 134
     for i, (medida, rotulo, icone, c) in enumerate(kpis):

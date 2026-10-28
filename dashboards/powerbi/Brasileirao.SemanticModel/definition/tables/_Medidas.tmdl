@@ -51,10 +51,10 @@ table _Medidas
 		lineageTag: aab07963-0f40-57f2-80df-bbb76ffef630
 
 	/// Variação da vantagem do mandante sem torcida contra 2015 a 2019.
-	measure 'Mando sem torcida' = DIVIDE ( [Vantagem sem torcida], [Vantagem com torcida 2015-2019] ) - 1
+	measure 'Variação da vantagem sem torcida' = DIVIDE ( [Vantagem sem torcida], [Vantagem com torcida 2015-2019] ) - 1
 		formatString: +0%;-0%;0%
 		displayFolder: KPI
-		lineageTag: 91f5fde9-c184-5e89-9847-53e748d91a31
+		lineageTag: 1385a9c4-4927-5869-9974-15f5416242a9
 
 	/// Vantagem em cada período do painel; em branco fora dos três períodos.
 	measure 'Vantagem por período' = IF ( ISBLANK ( SELECTEDVALUE ( jogos_time[periodo_painel] ) ), BLANK (), CALCULATE ( [Vantagem do mandante], REMOVEFILTERS ( jogos_time[temporada] ), REMOVEFILTERS ( jogos_time[bloco] ), REMOVEFILTERS ( jogos_time[bloco_ordem] ) ) )

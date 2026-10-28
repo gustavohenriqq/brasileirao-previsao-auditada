@@ -19,7 +19,7 @@ DAX = """EVALUATE ROW(
   "jogos", [Jogos], "gols_por_jogo", [Gols por jogo], "vitorias_mandante", [Vitórias do mandante],
   "ppj_casa", [Pontos por jogo em casa], "ppj_fora", [Pontos por jogo fora],
   "vantagem", [Vantagem do mandante], "antes", [Vantagem com torcida 2015-2019],
-  "sem", [Vantagem sem torcida], "variacao", [Mando sem torcida],
+  "sem", [Vantagem sem torcida], "variacao", [Variação da vantagem sem torcida],
   "times_cairam", [Times que caíram], "times_comparados", [Times comparados],
   "cairam_na_tabela", [Times que caíram na tabela], "times_na_tabela", [Times na tabela])"""
 
