@@ -1,0 +1,69 @@
+/// Um time em uma posição final, com a probabilidade (20 x 20).
+table posicoes
+	lineageTag: 0da52a6b-c2e7-591e-89cc-bcea7efc23b5
+
+	column time_id
+		dataType: string
+		lineageTag: 9eac31fd-909b-5490-b089-3c6b911291e2
+		summarizeBy: none
+		sourceColumn: time_id
+
+		annotation SummarizationSetBy = User
+
+	column posicao
+		dataType: int64
+		formatString: 0
+		lineageTag: 856e427f-68bf-5946-b916-2a322b4e05e9
+		summarizeBy: none
+		sourceColumn: posicao
+
+		annotation SummarizationSetBy = User
+
+	column probabilidade
+		dataType: double
+		formatString: 0.0%
+		lineageTag: c19f4900-3389-57b1-a6f3-eb9c31e21969
+		summarizeBy: none
+		sourceColumn: probabilidade
+
+		annotation SummarizationSetBy = User
+
+	column posicao_rotulo
+		dataType: string
+		lineageTag: 07e09d3c-38ec-5d5d-b64f-1bf5211132d8
+		summarizeBy: none
+		sourceColumn: posicao_rotulo
+		sortByColumn: posicao
+
+		annotation SummarizationSetBy = User
+
+	column zona
+		dataType: string
+		lineageTag: 299e0710-1207-594c-a6fc-d7472dea418f
+		summarizeBy: none
+		sourceColumn: zona
+		sortByColumn: zona_ordem
+
+		annotation SummarizationSetBy = User
+
+	column zona_ordem
+		dataType: int64
+		formatString: 0
+		lineageTag: 51a2f9a7-bd80-574a-a511-61435e23ca0f
+		summarizeBy: none
+		sourceColumn: zona_ordem
+
+		annotation SummarizationSetBy = User
+
+	partition posicoes = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(PastaDados & "posicoes.csv"), [Delimiter = ",", Columns = 6, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalho = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Nulos = Cabecalho,
+				    Tipos = Table.TransformColumnTypes(Nulos, {{"time_id", type text}, {"posicao", Int64.Type}, {"probabilidade", type number}, {"posicao_rotulo", type text}, {"zona", type text}, {"zona_ordem", Int64.Type}}, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_ResultType = Table

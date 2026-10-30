@@ -41,6 +41,11 @@ está em [BRIEF.md](BRIEF.md).
   a 32ª rodada, com um jogo da 21ª adiado), conferido pela ESPN e pelo
   football-data.co.uk em todos os 319. Total: 9.484 jogos. Os arquivos da
   temporada em andamento são baixados de novo a cada carga.
+- **Atualização de 30/10/2026:** 327 jogos de 2026 (até 29/10) e 53
+  pendentes em `marts.jogos_pendentes`; total de 9.492 jogos. A Fase 1 segue
+  com os números de 27/10.
+- Estatísticas por jogo da ESPN (`marts.fct_estatisticas_jogo`): chutes desde
+  2010, posse desde 2014, escanteios e faltas.
 
 **Fase 1: mando de campo sem torcida** (23/10/2026)
 
@@ -58,10 +63,27 @@ está em [BRIEF.md](BRIEF.md).
 números conferidos contra o JSON da análise (a imagem está no topo). Ver
 [dashboards/powerbi/README.md](dashboards/powerbi/README.md).
 
-**Testes:** dbt com 93 testes de dados (87 passam, 6 avisos propositais
-explicados abaixo) e 4 testes de unidade do parser.
+**Fase 2: modelos, backtest e previsão de 2026** (30/10/2026)
 
-Fases 2 (modelos e backtest) e 3 (automação para 2027) ainda não começaram.
+- Elo e Dixon-Coles com hiperparâmetros escolhidos em 2003 a 2011, validação
+  em 2012 a 2025 e teste final no replay de 2026, rodado uma vez.
+- 12 fatores testados (mando por time, forma, motivação, finalizações,
+  cansaço, copas, troca de técnico, mistura com o mercado e outros). Entraram
+  2: mando por time e força por finalizações. O conjunto é o modelo escolhido.
+- Em 2026, RPS de 0,2023 contra 0,1960 do mercado e 0,2172 da régua ingênua:
+  bate a ingênua, perde para o mercado, empata com o Elo.
+- Simulação do fim de 2026 (100 mil temporadas) e um painel Power BI novo
+  com ela, em [dashboards/powerbi_previsao/](dashboards/powerbi_previsao/README.md).
+  Ensaio interno, não publicado.
+- Resultados, ressalvas e onde conferir cada número em
+  [docs/fase2-modelos-backtest.md](docs/fase2-modelos-backtest.md); plano em
+  [docs/fase2-plano.md](docs/fase2-plano.md).
+
+**Testes:** dbt com 134 testes de dados (127 passam, 7 avisos propositais
+explicados abaixo) e 72 testes em Python (parser, estatísticas da ESPN,
+modelos da Fase 2, sem vazamento de dados futuros, e painel da previsão).
+
+A Fase 3 (automação para 2027) ainda não começou.
 
 ## Arquitetura
 
@@ -82,9 +104,12 @@ marts.dim_times / dim_temporadas
 marts.conferencia_fontes     jogo da base x cada fonte, com a explicação da divergência
 marts.resumo_conferencia     uma fonte por temporada
 marts.mando_jogos / mando_por_periodo   Fase 1: jogo com o período de torcida
+marts.fct_estatisticas_jogo  chutes, posse, escanteios e faltas por time e jogo (ESPN)
+marts.jogos_pendentes        jogos de 2026 que faltam
    │  analise/fase1_mando.py (bootstrap, checagens, gráfico)
+   │  modelos/ + analise/fase2_*.py (Elo, Dixon-Coles, fatores, backtest, simulação)
    ▼
-analise/resultados_fase1.json + docs/img/fase1_vantagem_por_temporada.png
+analise/resultados_fase1.json, analise/resultados_fase2.json, docs/img/
 ```
 
 | Fonte | Anos | Para quê |
@@ -92,7 +117,7 @@ analise/resultados_fase1.json + docs/img/fase1_vantagem_por_temporada.png
 | adaoduque/Brasileirao_Dataset | 2003 a 2025 | Espinha da base (única com tudo e com rodada) |
 | Mendeley Data (CC BY 4.0) | 2003 a 2019 | Conferência, única para 2003 a 2005 |
 | football-data.co.uk | 2012 a 2026 | Conferência e odds de fechamento |
-| ESPN (API JSON pública) | 2006 a 2026 | Conferência e público |
+| ESPN (API JSON pública) | 2006 a 2026 | Conferência, público, estatísticas por jogo; jogos de copa (Fase 2, fora do dbt) |
 | openfootball (CC0) | 2018 a 2026 | Conferência de placar e rodada |
 | football-data.org (plano gratuito) | 2023 a 2026 | Base de 2026 (única atualizada com rodada); conferência antes disso; rodadas de 2027 na Fase 3 |
 
@@ -111,7 +136,16 @@ cd dbt
 cd ..
 .venv\Scripts\python -m pytest
 .venv\Scripts\python analise\fase1_mando.py
+.venv\Scripts\python analise\fase2_hiperparametros.py   # ~17 min
+.venv\Scripts\python analise\fase2_backtest.py
+.venv\Scripts\python analise\fase2_fatores.py           # ~20 min
+.venv\Scripts\python analise\fase2_copas.py
+.venv\Scripts\python analise\fase2_simular_2026.py
 ```
+
+`analise\fase2_teste_2026.py` é o teste final: já rodou e recusa rodar de
+novo. O dbt lê a porta do Postgres da variável `POSTGRES_PORT`, não do
+`.env`; se o Postgres não estiver na 5433, defina a variável antes.
 
 O dbt roda por `python -m dbt.cli.main` porque política de aplicativos do
 Windows pode bloquear o `dbt.exe`. Os arquivos baixados ficam em
@@ -130,7 +164,7 @@ Windows pode bloquear o `dbt.exe`. Os arquivos baixados ficam em
 | Toda divergência tem explicação | `assert_divergencia_explicada` (aviso) |
 | Odds do football-data.co.uk casam com algum jogo | `assert_odds_casam_com_jogos` |
 
-Os 6 avisos esperados hoje:
+Os 7 avisos esperados hoje:
 
 | Aviso | Linhas | Por quê |
 |---|---|---|
@@ -140,6 +174,7 @@ Os 6 avisos esperados hoje:
 | `not_null_stg_fdcouk__jogos_gols_mandante` | 1 | O jogo não disputado de 2016, sem placar |
 | `mando_sem_torcida_com_publico` | 1 | Chapecoense x Palmeiras, 18/09/2021, 115 pessoas, antes da liberação do público na 23ª rodada |
 | `serie_b_publico_no_periodo_sem_torcida` | 20 | Série B: o público voltou antes (jul. a set. de 2021); esses jogos saem da comparação dos tradicionais |
+| `estatisticas_gols_espn_diferente_do_placar` | 71 | Gols da lista de estatísticas da ESPN contra o placar da base: 60 linhas de 2010 a 2013 com gol a menos na ESPN, 8 espalhadas de 2014 a 2020, 3 de 2026 com gol a mais. O placar da base é conferido por outras fontes; os modelos usam só os chutes dessa lista. Causa não investigada |
 
 Em 2026, jogo que a fonte ainda não atualizou fica como `pendente_na_fonte`
 (42 no openfootball em 27/10) e não conta como divergência nem como aviso.
@@ -181,6 +216,16 @@ Erros e achados, na ordem em que apareceram:
   de 2022 a 2025 para 2022 a 2026: 1.520 para 1.839 jogos e vantagem de 0,63
   para 0,64. O título, o card e o painel passaram a ler o período do JSON em
   vez de ter "2025" digitado.
+- **Teste de vazamento que olhava pouco** (30/10/2026). O teste que garante
+  que o replay não vê o futuro só checava rodadas antes do corte; a rodada do
+  corte ficava de fora. Trocado para "até o corte". Também: o carregador
+  recusa ler 2026 sem pedir, e o replay esconde as odds dos jogos futuros.
+- **Faixa de 90% que acertava 86%.** Na simulação, as forças dos times
+  ficavam congeladas. Com incerteza sorteada (escala escolhida em 2005 a
+  2011), a cobertura foi para 90% a 91%.
+- **Mais fatores, quase nenhum ganho.** Forma, ânimo, motivação, confronto,
+  estilo, cansaço, técnico e copas não passaram. A mistura com o mercado
+  escolheu peso 1: o melhor é o próprio mercado.
 
 ## Regras do projeto
 

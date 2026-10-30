@@ -1,0 +1,18 @@
+[12:06:37] base: 9489 jogos; 2026: 324 jogos, rodadas 1 a 33, última data 28/10/2026
+[12:06:44] previstos 324 jogos; com todos os modelos (mercado inclusive): 319
+[12:06:44]   ingenua      RPS 0.21721  log-loss 1.05425
+[12:06:44]   mercado      RPS 0.19595  log-loss 0.99136
+[12:06:44]   elo          RPS 0.20321  log-loss 1.01197
+[12:06:44]   dc           RPS 0.20430  log-loss 1.01916
+[12:06:44]   conjunto_dc  RPS 0.20233  log-loss 1.01429
+[12:06:44]   conjunto_dc - ingenua: -0.01487 [-0.02510; -0.00425]
+[12:06:44]   conjunto_dc - mercado: +0.00638 [+0.00221; +0.01087]
+[12:06:44]   conjunto_dc - elo: -0.00088 [-0.00453; +0.00322]
+[12:06:44]   conjunto_dc - dc: -0.00197 [-0.00453; +0.00083]
+[12:06:44] jogo a jogo pronto (8 s)
+[12:06:45]   replay ingenua      erro_pontos 5.929, erro_posicao 2.635, acerto_g4 0.625, acerto_g6 0.708, acerto_z4 0.562, cobertura_90 0.725
+[12:06:47]   replay elo          erro_pontos 4.743, erro_posicao 2.487, acerto_g4 0.625, acerto_g6 0.625, acerto_z4 0.500, cobertura_90 0.863
+[12:06:53]   replay dc           erro_pontos 4.752, erro_posicao 2.430, acerto_g4 0.625, acerto_g6 0.625, acerto_z4 0.500, cobertura_90 0.875
+[12:07:19]   replay conjunto_dc  erro_pontos 4.520, erro_posicao 2.373, acerto_g4 0.625, acerto_g6 0.667, acerto_z4 0.562, cobertura_90 0.925
+[12:07:19] replay pronto (43 s)
+[12:07:19] gravado em C:\Users\Dell\Downloads\projeto-brasileirao\analise\resultados_fase2.json

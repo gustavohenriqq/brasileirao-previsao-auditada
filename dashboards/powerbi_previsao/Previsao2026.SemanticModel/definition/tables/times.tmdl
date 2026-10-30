@@ -1,0 +1,195 @@
+/// Um time da Série A de 2026: situação atual e resultado das simulações.
+table times
+	lineageTag: 4f6246b5-4e8a-596b-a866-6af12d4c8d1e
+
+	column time_id
+		dataType: string
+		lineageTag: 4ca90a82-4f3c-5905-b1d9-dc6d6477d0f4
+		summarizeBy: none
+		sourceColumn: time_id
+
+		annotation SummarizationSetBy = User
+
+	column time
+		dataType: string
+		lineageTag: c3b0a460-1588-5b65-b587-3a0f5a774589
+		summarizeBy: none
+		sourceColumn: time
+		sortByColumn: ordem_prevista
+
+		annotation SummarizationSetBy = User
+
+	column posicao_atual
+		dataType: int64
+		formatString: 0
+		lineageTag: b5049c51-30fe-56ee-8f2c-8d23127b19dc
+		summarizeBy: none
+		sourceColumn: posicao_atual
+
+		annotation SummarizationSetBy = User
+
+	column pontos_atuais
+		dataType: int64
+		formatString: 0
+		lineageTag: b588dc42-e31d-53c9-816e-22b22e5cec6c
+		summarizeBy: none
+		sourceColumn: pontos_atuais
+
+		annotation SummarizationSetBy = User
+
+	column vitorias_atuais
+		dataType: int64
+		formatString: 0
+		lineageTag: b9f0de88-8ffe-57cb-b070-0eb1d975c10e
+		summarizeBy: none
+		sourceColumn: vitorias_atuais
+
+		annotation SummarizationSetBy = User
+
+	column saldo_atual
+		dataType: int64
+		formatString: 0
+		lineageTag: ba0e6e19-a40b-57bc-aa30-e3b452287295
+		summarizeBy: none
+		sourceColumn: saldo_atual
+
+		annotation SummarizationSetBy = User
+
+	column gols_pro_atuais
+		dataType: int64
+		formatString: 0
+		lineageTag: 10267a2c-532f-5346-84e8-91cad39256d1
+		summarizeBy: none
+		sourceColumn: gols_pro_atuais
+
+		annotation SummarizationSetBy = User
+
+	column jogos_disputados
+		dataType: int64
+		formatString: 0
+		lineageTag: 199bbbba-f3fc-5322-a56e-cd5aad86512d
+		summarizeBy: none
+		sourceColumn: jogos_disputados
+
+		annotation SummarizationSetBy = User
+
+	column jogos_restantes
+		dataType: int64
+		formatString: 0
+		lineageTag: c129d49b-e880-5a11-8821-f6d4dfaa92a3
+		summarizeBy: none
+		sourceColumn: jogos_restantes
+
+		annotation SummarizationSetBy = User
+
+	column pontos_esperados
+		dataType: double
+		formatString: 0.0
+		lineageTag: 67ee53bb-1083-5a65-bc1b-0dbdc2a48a4d
+		summarizeBy: none
+		sourceColumn: pontos_esperados
+
+		annotation SummarizationSetBy = User
+
+	column pontos_p5
+		dataType: double
+		formatString: 0
+		lineageTag: 45347a60-ff22-524f-a9f6-76d60a171abd
+		summarizeBy: none
+		sourceColumn: pontos_p5
+
+		annotation SummarizationSetBy = User
+
+	column pontos_p95
+		dataType: double
+		formatString: 0
+		lineageTag: b0098c1b-db01-5cc5-9ddc-cf9a14488272
+		summarizeBy: none
+		sourceColumn: pontos_p95
+
+		annotation SummarizationSetBy = User
+
+	column posicao_esperada
+		dataType: double
+		formatString: 0.0
+		lineageTag: 989c0f49-6cd0-5597-8c73-e2344ed984dc
+		summarizeBy: none
+		sourceColumn: posicao_esperada
+
+		annotation SummarizationSetBy = User
+
+	column p_titulo
+		dataType: double
+		formatString: 0.0%
+		lineageTag: bac2ec88-ed99-5983-b538-34326edbbeba
+		summarizeBy: none
+		sourceColumn: p_titulo
+
+		annotation SummarizationSetBy = User
+
+	column p_g4
+		dataType: double
+		formatString: 0.0%
+		lineageTag: 3792e7b2-c0c3-5f6c-bfae-9faf4ede61ed
+		summarizeBy: none
+		sourceColumn: p_g4
+
+		annotation SummarizationSetBy = User
+
+	column p_g6
+		dataType: double
+		formatString: 0.0%
+		lineageTag: ed822421-e4f7-5a37-8629-f81d4ae71ba0
+		summarizeBy: none
+		sourceColumn: p_g6
+
+		annotation SummarizationSetBy = User
+
+	column p_sul_americana
+		dataType: double
+		formatString: 0.0%
+		lineageTag: 8ab07499-14a4-575c-b041-9cde341e2649
+		summarizeBy: none
+		sourceColumn: p_sul_americana
+
+		annotation SummarizationSetBy = User
+
+	column p_z4
+		dataType: double
+		formatString: 0.0%
+		lineageTag: 3a6cc881-9212-58fa-a459-cc28fd20ad3d
+		summarizeBy: none
+		sourceColumn: p_z4
+
+		annotation SummarizationSetBy = User
+
+	column ordem_prevista
+		dataType: int64
+		formatString: 0
+		lineageTag: 96d756cc-929f-5cb7-be9e-2ca1cc9476c1
+		summarizeBy: none
+		sourceColumn: ordem_prevista
+
+		annotation SummarizationSetBy = User
+
+	column escudo
+		dataType: string
+		lineageTag: 3ebcf067-3fba-5680-8cfd-7421d8ef16d1
+		summarizeBy: none
+		sourceColumn: escudo
+		dataCategory: ImageUrl
+
+		annotation SummarizationSetBy = User
+
+	partition times = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(PastaDados & "times.csv"), [Delimiter = ",", Columns = 20, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalho = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Nulos = Cabecalho,
+				    Tipos = Table.TransformColumnTypes(Nulos, {{"time_id", type text}, {"time", type text}, {"posicao_atual", Int64.Type}, {"pontos_atuais", Int64.Type}, {"vitorias_atuais", Int64.Type}, {"saldo_atual", Int64.Type}, {"gols_pro_atuais", Int64.Type}, {"jogos_disputados", Int64.Type}, {"jogos_restantes", Int64.Type}, {"pontos_esperados", type number}, {"pontos_p5", type number}, {"pontos_p95", type number}, {"posicao_esperada", type number}, {"p_titulo", type number}, {"p_g4", type number}, {"p_g6", type number}, {"p_sul_americana", type number}, {"p_z4", type number}, {"ordem_prevista", Int64.Type}, {"escudo", type text}}, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_ResultType = Table

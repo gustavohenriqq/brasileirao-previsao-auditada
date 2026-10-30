@@ -1,0 +1,3 @@
+relationship 6455f1da-2744-5027-9b37-ca145f1746df
+	fromColumn: posicoes.time_id
+	toColumn: times.time_id

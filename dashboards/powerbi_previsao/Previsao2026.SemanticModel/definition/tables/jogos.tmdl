@@ -1,0 +1,129 @@
+/// Um jogo que falta, com as probabilidades do modelo (data vazia = a definir).
+table jogos
+	lineageTag: 84f04c8c-297f-53ac-8be9-df180d44ac5d
+
+	column id_jogo
+		dataType: string
+		lineageTag: 501588dd-45fa-5a68-9be6-01816f080f71
+		summarizeBy: none
+		sourceColumn: id_jogo
+
+		annotation SummarizationSetBy = User
+
+	column ordem
+		dataType: int64
+		formatString: 0
+		lineageTag: eda245c4-5565-5ac1-9473-644b4310d914
+		summarizeBy: none
+		sourceColumn: ordem
+
+		annotation SummarizationSetBy = User
+
+	column rodada
+		dataType: int64
+		formatString: 0
+		lineageTag: 80f71ad6-122d-523b-8b88-6a131878bb58
+		summarizeBy: none
+		sourceColumn: rodada
+
+		annotation SummarizationSetBy = User
+
+	column data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: d5a7e1b1-9501-5c16-a39c-75d5734922ec
+		summarizeBy: none
+		sourceColumn: data
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = User
+
+	column quando
+		dataType: string
+		lineageTag: 0f6a4f6c-db5a-5f3b-bc71-eb9c39873a72
+		summarizeBy: none
+		sourceColumn: quando
+		sortByColumn: ordem
+
+		annotation SummarizationSetBy = User
+
+	column mandante
+		dataType: string
+		lineageTag: 238182b8-c049-53a1-bf2c-b1d5beb517f0
+		summarizeBy: none
+		sourceColumn: mandante
+
+		annotation SummarizationSetBy = User
+
+	column visitante
+		dataType: string
+		lineageTag: 2abf3628-a380-5d3a-ae19-625479c74202
+		summarizeBy: none
+		sourceColumn: visitante
+
+		annotation SummarizationSetBy = User
+
+	column mandante_id
+		dataType: string
+		lineageTag: faa62a97-5e18-5780-9d81-0bca028c63cf
+		summarizeBy: none
+		sourceColumn: mandante_id
+
+		annotation SummarizationSetBy = User
+
+	column visitante_id
+		dataType: string
+		lineageTag: f18bef2f-7983-5ced-9e19-24a59bcd7a1d
+		summarizeBy: none
+		sourceColumn: visitante_id
+
+		annotation SummarizationSetBy = User
+
+	column p_mandante
+		dataType: double
+		formatString: 0%
+		lineageTag: 5aa44d11-61ed-54a0-b37f-8c29838a151c
+		summarizeBy: none
+		sourceColumn: p_mandante
+
+		annotation SummarizationSetBy = User
+
+	column p_empate
+		dataType: double
+		formatString: 0%
+		lineageTag: ae296e25-68c3-5843-994d-60a3263374ac
+		summarizeBy: none
+		sourceColumn: p_empate
+
+		annotation SummarizationSetBy = User
+
+	column p_visitante
+		dataType: double
+		formatString: 0%
+		lineageTag: a1cc4aaf-4cc0-57d9-9462-eb1c3c968dee
+		summarizeBy: none
+		sourceColumn: p_visitante
+
+		annotation SummarizationSetBy = User
+
+	column placar_mais_provavel
+		dataType: string
+		lineageTag: 6097e9ec-80a6-58ea-bcff-933dacf81a5f
+		summarizeBy: none
+		sourceColumn: placar_mais_provavel
+
+		annotation SummarizationSetBy = User
+
+	partition jogos = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(PastaDados & "jogos.csv"), [Delimiter = ",", Columns = 13, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalho = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Nulos = Table.ReplaceValue(Cabecalho, "", null, Replacer.ReplaceValue, {"data"}),
+				    Tipos = Table.TransformColumnTypes(Nulos, {{"id_jogo", type text}, {"ordem", Int64.Type}, {"rodada", Int64.Type}, {"data", type date}, {"quando", type text}, {"mandante", type text}, {"visitante", type text}, {"mandante_id", type text}, {"visitante_id", type text}, {"p_mandante", type number}, {"p_empate", type number}, {"p_visitante", type number}, {"placar_mais_provavel", type text}}, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_ResultType = Table

@@ -1,4 +1,5 @@
-"""Baixa as fontes e carrega cada uma em raw.<fonte>_jogos.
+"""Baixa as fontes e carrega cada uma em raw.<fonte>_jogos (ou na tabela
+indicada em fontes.TABELAS, caso de raw.espn_estatisticas).
 
 Uso:
     python -m ingestao.carregar                 # todas as fontes
@@ -9,7 +10,7 @@ from __future__ import annotations
 import sys
 
 from .comum import carregar_raw
-from .fontes import FONTES
+from .fontes import FONTES, TABELAS
 
 
 def main(nomes: list[str]) -> None:
@@ -23,8 +24,9 @@ def main(nomes: list[str]) -> None:
         if resultado is None:
             continue
         colunas, linhas = resultado
-        n = carregar_raw(f"{nome}_jogos", colunas, linhas)
-        print(f"{nome}: {n} linhas em raw.{nome}_jogos")
+        tabela = TABELAS.get(nome, f"{nome}_jogos")
+        n = carregar_raw(tabela, colunas, linhas)
+        print(f"{nome}: {n} linhas em raw.{tabela}")
 
 
 if __name__ == "__main__":

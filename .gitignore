@@ -23,3 +23,12 @@ dashboards/powerbi/arte/previa_*.png
 dashboards/powerbi/Brasileirao.SemanticModel/.pbi/
 dashboards/powerbi/Brasileirao.Report/.pbi/
 dashboards/powerbi/Brasileirao.SemanticModel/definition/cultures/
+# Painel de previsão (Fase 2): mesmas regras do painel da Fase 1
+dashboards/powerbi_previsao/dados/
+dashboards/powerbi_previsao/arte/escudos/*.png
+dashboards/powerbi_previsao/arte/png/logo_brasileirao.png
+dashboards/powerbi_previsao/Previsao2026.Report/StaticResources/RegisteredResources/logo_brasileirao.png
+dashboards/powerbi_previsao/arte/html/
+dashboards/powerbi_previsao/Previsao2026.SemanticModel/.pbi/
+dashboards/powerbi_previsao/Previsao2026.Report/.pbi/
+dashboards/powerbi_previsao/Previsao2026.SemanticModel/definition/cultures/

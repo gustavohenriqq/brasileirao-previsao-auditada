@@ -22,3 +22,8 @@ sources:
         description: "ESPN, Série B (bra.2), 2020 e 2021. Só para os tradicionais que jogaram a Série B sem torcida."
       - name: openfootball_b_jogos
         description: "openfootball/brazil, Série B (br2), 2020 e 2021, com rodada. CC0."
+      - name: espn_estatisticas
+        description: >
+          ESPN, estatísticas de jogo (competitors[].statistics) dos mesmos
+          arquivos de raw.espn_jogos. Uma linha = um lado (home/away) de um
+          evento que tem a lista statistics. Tudo em texto, como veio.
