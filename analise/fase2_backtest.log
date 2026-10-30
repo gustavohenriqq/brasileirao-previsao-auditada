@@ -1,0 +1,46 @@
+
+Validação 2012-2025: 5319 jogos, backtest em 24 s
+modelo                        RPS  log-loss
+Ingênua                   0.21791   1.04995
+Mercado (proporcional)    0.20104   0.99812
+Mercado (Shin)            0.20097   0.99788
+Elo                       0.20778   1.01971
+Dixon-Coles               0.20823   1.02098
+
+Diferença pareada de RPS (IC 95%, bootstrap por rodada):
+  mercado_menos_ingenua        -0.01687  [-0.01934, -0.01435]
+  mercado_shin_menos_ingenua   -0.01694  [-0.01945, -0.01436]
+  elo_menos_ingenua            -0.01013  [-0.01211, -0.00815]
+  dc_menos_ingenua             -0.00968  [-0.01153, -0.00783]
+  mercado_shin_menos_mercado   -0.00007  [-0.00015, +0.00001]
+  elo_menos_mercado            +0.00674  [+0.00508, +0.00836]
+  dc_menos_mercado             +0.00719  [+0.00557, +0.00874]
+  dc_menos_elo                 +0.00045  [-0.00035, +0.00125]
+
+RPS por temporada:
+temporada        ingenua       mercado  mercado_shin           elo            dc
+2012             0.21695       0.20225       0.20221       0.20846       0.20952
+2013             0.21400       0.20433       0.20433       0.21042       0.21067
+2014             0.21644       0.20392       0.20378       0.20580       0.20831
+2015             0.21507       0.20055       0.20036       0.20728       0.20852
+2016             0.21072       0.19548       0.19529       0.20370       0.20325
+2017             0.22998       0.22370       0.22410       0.22723       0.22659
+2018             0.20049       0.17650       0.17596       0.18773       0.18799
+2019             0.22122       0.19226       0.19214       0.19789       0.19844
+2020             0.22317       0.20712       0.20726       0.21295       0.21292
+2021             0.21698       0.20041       0.20040       0.20857       0.20869
+2022             0.22353       0.20320       0.20332       0.20801       0.20987
+2023             0.22434       0.20985       0.20986       0.21799       0.21686
+2024             0.22107       0.19695       0.19666       0.20977       0.21152
+2025             0.21671       0.19797       0.19782       0.20304       0.20200
+
+Replay de tabela (média de 2012 a 2025, cortes [10, 15, 20, 25], 10000 simulações, 102 s):
+modelo     alvo   erro_pontos  erro_posicao     acerto_g4     acerto_g6     acerto_z4  cobertura_90
+dc           33         4.614         2.376         0.728         0.756         0.612         0.855
+dc           38         5.566         2.506         0.723         0.750         0.598         0.830
+elo          33         4.575         2.368         0.732         0.759         0.647         0.860
+elo          38         5.544         2.482         0.714         0.762         0.607         0.827
+ingenua      33         5.258         2.578         0.732         0.759         0.638         0.806
+ingenua      38         6.324         2.720         0.737         0.762         0.621         0.778
+
+Resultados em analise\resultados_fase2.json; previsões em analise\previsoes_fase2_validacao.csv
