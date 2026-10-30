@@ -207,3 +207,110 @@ models:
                 minimo: 0
       - name: periodo
         data_tests: [not_null]
+
+  - name: fct_estatisticas_jogo
+    description: >
+      Estatísticas de jogo da ESPN. Uma linha = um time em um jogo
+      (jogo_id, time_id), dois por jogo. Casada com o fct_jogos pelo de-para
+      da ESPN (temporada + mandante + visitante). Jogo sem estatística não tem
+      linha; campo não coletado no jogo fica nulo (detalhes no SQL).
+    data_tests:
+      - combinacao_unica:
+          arguments:
+            colunas: [jogo_id, time_id]
+      - linhas_onde:
+          name: estatisticas_linha_sem_estatistica
+          description: "Jogo sem estatística não pode virar linha (nem com zero, nem toda nula)."
+          arguments:
+            condicao: "posse_pct is null and chutes is null and escanteios is null and faltas is null"
+      - linhas_onde:
+          name: estatisticas_posse_fora_de_0_a_100
+          arguments:
+            condicao: "posse_pct < 0 or posse_pct > 100"
+      - linhas_onde:
+          name: estatisticas_chutes_no_gol_acima_dos_chutes
+          arguments:
+            condicao: "chutes_no_gol > chutes"
+          config:
+            severity: warn
+      - linhas_onde:
+          name: estatisticas_gols_espn_diferente_do_placar
+          description: >
+            Gols da lista de estatísticas da ESPN contra o placar do fct_jogos.
+            Em aviso: uma linha por time em que a conta não bate.
+          arguments:
+            condicao: "gols_espn is distinct from gols"
+          config:
+            severity: warn
+    columns:
+      - name: jogo_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('fct_jogos')
+                field: jogo_id
+      - name: id_espn
+        data_tests: [not_null]
+      - name: temporada
+        data_tests: [not_null]
+      - name: data
+        data_tests: [not_null]
+      - name: time_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_times')
+                field: time_id
+      - name: adversario_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_times')
+                field: time_id
+      - name: mando
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['casa', 'fora']
+
+  - name: jogos_pendentes
+    description: >
+      Jogos da temporada em andamento que faltam (football-data.org, status
+      diferente de FINISHED), com o time_id do projeto. Inclui o adiado.
+    data_tests:
+      - combinacao_unica:
+          arguments:
+            colunas: [temporada, mandante_id, visitante_id]
+    columns:
+      - name: id_fdorg
+        data_tests: [unique, not_null]
+      - name: temporada
+        data_tests: [not_null]
+      - name: rodada
+        data_tests: [not_null]
+      - name: data_prevista
+        description: "Nula só no adiado sem nova data."
+      - name: mandante_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_times')
+                field: time_id
+      - name: visitante_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_times')
+                field: time_id
+      - name: status_fonte
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['SCHEDULED', 'TIMED', 'POSTPONED', 'SUSPENDED', 'IN_PLAY', 'PAUSED', 'CANCELLED']

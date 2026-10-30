@@ -125,40 +125,101 @@ ESPN_COLS = [
 ]
 
 
-def espn(liga: str = "bra.1", pasta_nome: str = "espn", anos: range | None = None,
-         temporadas: range = TEMPORADAS) -> tuple[list[str], list[dict]]:
+def _espn_eventos(liga: str, pasta_nome: str, anos: range | None,
+                  temporadas: range, refazer_andamento: bool = True):
+    """Percorre os eventos dos arquivos anuais da ESPN, um por id, devolvendo
+    (arquivo, sha256, temporada, evento). `refazer_andamento=False` lê o
+    arquivo da temporada em andamento que já está em disco, sem baixar."""
     pasta = BRUTOS / pasta_nome
     url = ESPN.replace("bra.1", liga)
-    linhas: list[dict] = []
     vistos: set[str] = set()
     # +1 ano civil (2020 terminou em 2021), exceto depois da temporada em andamento
     ultimo = max(TEMPORADAS) + (0 if max(TEMPORADAS) == TEMPORADA_EM_ANDAMENTO else 1)
     anos = anos or range(2006, ultimo + 1)
     for ano in anos:
         arq = baixar(f"{url}?dates={ano}&limit=1000", pasta / f"{ano}.json", pausa=0.5,
-                     refazer=ano == TEMPORADA_EM_ANDAMENTO and ano in temporadas)
+                     refazer=(refazer_andamento and ano == TEMPORADA_EM_ANDAMENTO
+                              and ano in temporadas))
         hash_ = sha256(arq)
         for e in json.loads(arq.read_text(encoding="utf-8")).get("events", []):
             temporada = e.get("season", {}).get("year")
             if temporada not in temporadas or e["id"] in vistos:
                 continue
             vistos.add(e["id"])
-            c = e["competitions"][0]
-            lado = {t["homeAway"]: t for t in c["competitors"]}
-            venue = c.get("venue") or {}
-            linhas.append({
-                "id": e["id"], "temporada": temporada, "data_utc": e["date"],
-                "status": c["status"]["type"]["name"],
-                "mandante": lado["home"]["team"]["displayName"],
-                "visitante": lado["away"]["team"]["displayName"],
-                "placar_mandante": lado["home"].get("score"),
-                "placar_visitante": lado["away"].get("score"),
-                "publico": c.get("attendance"),
-                "estadio": venue.get("fullName"),
-                "cidade": (venue.get("address") or {}).get("city"),
-                "_arquivo": arq.name, "_sha256": hash_,
-            })
+            yield arq, hash_, temporada, e
+
+
+def espn(liga: str = "bra.1", pasta_nome: str = "espn", anos: range | None = None,
+         temporadas: range = TEMPORADAS) -> tuple[list[str], list[dict]]:
+    linhas: list[dict] = []
+    for arq, hash_, temporada, e in _espn_eventos(liga, pasta_nome, anos, temporadas):
+        c = e["competitions"][0]
+        lado = {t["homeAway"]: t for t in c["competitors"]}
+        venue = c.get("venue") or {}
+        linhas.append({
+            "id": e["id"], "temporada": temporada, "data_utc": e["date"],
+            "status": c["status"]["type"]["name"],
+            "mandante": lado["home"]["team"]["displayName"],
+            "visitante": lado["away"]["team"]["displayName"],
+            "placar_mandante": lado["home"].get("score"),
+            "placar_visitante": lado["away"].get("score"),
+            "publico": c.get("attendance"),
+            "estadio": venue.get("fullName"),
+            "cidade": (venue.get("address") or {}).get("city"),
+            "_arquivo": arq.name, "_sha256": hash_,
+        })
     return ESPN_COLS, linhas
+
+
+# Estatísticas de jogo da ESPN: os mesmos arquivos, outra parte do JSON
+# (competitors[].statistics). Uma linha = um lado (home/away) de um evento.
+# Lado sem a lista `statistics` não gera linha. Bloco com tudo zerado (a ESPN
+# às vezes publica o molde vazio) fica no raw como veio; o staging decide.
+# Lê o arquivo de 2026 que a fonte `espn` acabou de baixar, para as duas
+# tabelas virem do mesmo arquivo (rode as duas juntas).
+ESPN_ESTATISTICAS = {
+    "possessionPct": "possession_pct",
+    "totalShots": "total_shots",
+    "shotsOnTarget": "shots_on_target",
+    "wonCorners": "won_corners",
+    "foulsCommitted": "fouls_committed",
+    "shotAssists": "shot_assists",
+    "goalAssists": "goal_assists",
+    "appearances": "appearances",
+    "totalGoals": "total_goals",
+}
+
+ESPN_ESTATISTICAS_COLS = [
+    "id", "temporada", "data_utc", "status", "lado", "time", "placar",
+    *ESPN_ESTATISTICAS.values(),
+]
+
+
+def linhas_estatisticas_espn(evento: dict, temporada) -> list[dict]:
+    """Uma linha por lado do evento que tem a lista `statistics`."""
+    c = evento["competitions"][0]
+    linhas = []
+    for t in c["competitors"]:
+        stats = t.get("statistics") or []
+        if not stats:
+            continue
+        valores = {s["name"]: s.get("displayValue") for s in stats}
+        linhas.append({
+            "id": evento["id"], "temporada": temporada, "data_utc": evento["date"],
+            "status": c["status"]["type"]["name"], "lado": t["homeAway"],
+            "time": t["team"]["displayName"], "placar": t.get("score"),
+            **{col: valores.get(nome) for nome, col in ESPN_ESTATISTICAS.items()},
+        })
+    return linhas
+
+
+def espn_estatisticas() -> tuple[list[str], list[dict]]:
+    linhas: list[dict] = []
+    for arq, hash_, temporada, e in _espn_eventos("bra.1", "espn", None, TEMPORADAS,
+                                                  refazer_andamento=False):
+        for linha in linhas_estatisticas_espn(e, temporada):
+            linhas.append({**linha, "_arquivo": arq.name, "_sha256": hash_})
+    return ESPN_ESTATISTICAS_COLS, linhas
 
 
 # ---------------------------------------------------------------------------
@@ -299,8 +360,14 @@ FONTES = {
     "mendeley": mendeley,
     "fdcouk": fdcouk,
     "espn": espn,
+    "espn_estatisticas": espn_estatisticas,  # depois de espn: lê o mesmo arquivo
     "openfootball": openfootball,
     "fdorg": fdorg,
     "espn_b": espn_b,
     "openfootball_b": openfootball_b,
+}
+
+# Tabela raw de cada fonte: raw.<fonte>_jogos, salvo as listadas aqui.
+TABELAS = {
+    "espn_estatisticas": "espn_estatisticas",
 }

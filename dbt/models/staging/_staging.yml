@@ -64,3 +64,37 @@ models:
         data_tests: [unique, not_null]
       - name: rodada
         data_tests: [not_null]
+
+  - name: stg_espn__estatisticas
+    description: "Estatísticas de jogo da ESPN com tipos. Uma linha = um lado de um evento."
+    data_tests:
+      - combinacao_unica:
+          arguments:
+            colunas: [id_na_fonte, lado]
+    columns:
+      - name: id_na_fonte
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_espn__jogos')
+                field: id_na_fonte
+      - name: mando
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['casa', 'fora']
+      - name: posse_pct
+        description: "Nulo aqui é texto que não é número (formato novo na ESPN)."
+        data_tests: [not_null]
+      - name: chutes
+        data_tests: [not_null]
+      - name: chutes_no_gol
+        data_tests: [not_null]
+      - name: escanteios
+        data_tests: [not_null]
+      - name: faltas
+        data_tests: [not_null]
+      - name: gols
+        data_tests: [not_null]
