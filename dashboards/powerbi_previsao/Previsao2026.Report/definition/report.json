@@ -1,0 +1,140 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/3.3.0/schema.json",
+  "themeCollection": {
+    "baseTheme": {
+      "name": "Fluent2-CY26SU09",
+      "reportVersionAtImport": {
+        "visual": "2.13.0",
+        "report": "3.4.0",
+        "page": "2.3.1"
+      },
+      "type": "SharedResources"
+    },
+    "customTheme": {
+      "name": "tema-previsao.json",
+      "reportVersionAtImport": {
+        "visual": "2.13.0",
+        "report": "3.4.0",
+        "page": "2.3.1"
+      },
+      "type": "RegisteredResources"
+    }
+  },
+  "objects": {
+    "outspacePane": [
+      {
+        "properties": {
+          "expanded": {
+            "expr": {
+              "Literal": {
+                "Value": "false"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "resourcePackages": [
+    {
+      "name": "SharedResources",
+      "type": "SharedResources",
+      "items": [
+        {
+          "name": "Fluent2-CY26SU09",
+          "path": "BaseThemes/Fluent2-CY26SU09.json",
+          "type": "BaseTheme"
+        }
+      ]
+    },
+    {
+      "name": "RegisteredResources",
+      "type": "RegisteredResources",
+      "items": [
+        {
+          "name": "tema-previsao.json",
+          "path": "tema-previsao.json",
+          "type": "CustomTheme"
+        },
+        {
+          "name": "fundo.png",
+          "path": "fundo.png",
+          "type": "Image"
+        },
+        {
+          "name": "icone_chance.png",
+          "path": "icone_chance.png",
+          "type": "Image"
+        },
+        {
+          "name": "icone_jogos.png",
+          "path": "icone_jogos.png",
+          "type": "Image"
+        },
+        {
+          "name": "icone_queda.png",
+          "path": "icone_queda.png",
+          "type": "Image"
+        },
+        {
+          "name": "icone_restantes.png",
+          "path": "icone_restantes.png",
+          "type": "Image"
+        },
+        {
+          "name": "icone_simulacoes.png",
+          "path": "icone_simulacoes.png",
+          "type": "Image"
+        },
+        {
+          "name": "icone_titulo.png",
+          "path": "icone_titulo.png",
+          "type": "Image"
+        },
+        {
+          "name": "logo_brasileirao.png",
+          "path": "logo_brasileirao.png",
+          "type": "Image"
+        },
+        {
+          "name": "titulo_chances.png",
+          "path": "titulo_chances.png",
+          "type": "Image"
+        },
+        {
+          "name": "titulo_jogos.png",
+          "path": "titulo_jogos.png",
+          "type": "Image"
+        },
+        {
+          "name": "titulo_posicoes.png",
+          "path": "titulo_posicoes.png",
+          "type": "Image"
+        },
+        {
+          "name": "titulo_texto_chances.png",
+          "path": "titulo_texto_chances.png",
+          "type": "Image"
+        },
+        {
+          "name": "titulo_texto_jogos.png",
+          "path": "titulo_texto_jogos.png",
+          "type": "Image"
+        },
+        {
+          "name": "titulo_texto_posicoes.png",
+          "path": "titulo_texto_posicoes.png",
+          "type": "Image"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "useStylableVisualContainerHeader": true,
+    "exportDataMode": "AllowSummarized",
+    "defaultDrillFilterOtherVisuals": true,
+    "allowChangeFilterTypes": true,
+    "useEnhancedTooltips": true,
+    "useDefaultAggregateDisplayName": true
+  }
+}

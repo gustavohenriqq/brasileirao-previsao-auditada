@@ -1,0 +1,124 @@
+/// Uma linha com os totais da simulação e do teste.
+table info
+	lineageTag: f9d247a1-d5a9-54a3-87b4-b7d0b6ef96df
+
+	column simulacoes
+		dataType: int64
+		formatString: #,0
+		lineageTag: 4bd2293e-968d-5b8c-a649-2248c78ba2fb
+		summarizeBy: none
+		sourceColumn: simulacoes
+
+		annotation SummarizationSetBy = User
+
+	column jogos_disputados
+		dataType: int64
+		formatString: 0
+		lineageTag: f22982fe-4f2c-5a09-bd4f-5b62946c4fd1
+		summarizeBy: none
+		sourceColumn: jogos_disputados
+
+		annotation SummarizationSetBy = User
+
+	column jogos_restantes
+		dataType: int64
+		formatString: 0
+		lineageTag: 520cda7e-3431-545e-8e96-87dc04c9c12e
+		summarizeBy: none
+		sourceColumn: jogos_restantes
+
+		annotation SummarizationSetBy = User
+
+	column jogos_total
+		dataType: int64
+		formatString: 0
+		lineageTag: cda5ac76-7a8a-5843-8f03-d4cfe1902711
+		summarizeBy: none
+		sourceColumn: jogos_total
+
+		annotation SummarizationSetBy = User
+
+	column ultimo_jogo
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 2237511a-aca6-587c-a02e-c9903d6f9c4b
+		summarizeBy: none
+		sourceColumn: ultimo_jogo
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = User
+
+	column pendentes_sem_data
+		dataType: int64
+		formatString: 0
+		lineageTag: 839b3e0b-802f-56fe-8f70-0d73ff3d532c
+		summarizeBy: none
+		sourceColumn: pendentes_sem_data
+
+		annotation SummarizationSetBy = User
+
+	column incerteza
+		dataType: double
+		formatString: 0.0
+		lineageTag: d34bbcfe-e991-5665-bd29-97daf668b0bb
+		summarizeBy: none
+		sourceColumn: incerteza
+
+		annotation SummarizationSetBy = User
+
+	column jogos_teste
+		dataType: int64
+		formatString: 0
+		lineageTag: 5cd90c00-8406-537c-8524-edb2b539e419
+		summarizeBy: none
+		sourceColumn: jogos_teste
+
+		annotation SummarizationSetBy = User
+
+	column cortes_replay
+		dataType: int64
+		formatString: 0
+		lineageTag: 342589dd-fff4-5b9b-8c15-db7f567fed6a
+		summarizeBy: none
+		sourceColumn: cortes_replay
+
+		annotation SummarizationSetBy = User
+
+	column cortes_texto
+		dataType: string
+		lineageTag: 550dcd46-0f7f-5f8e-9399-f4e0b3daf0c2
+		summarizeBy: none
+		sourceColumn: cortes_texto
+
+		annotation SummarizationSetBy = User
+
+	column rodada_alvo_replay
+		dataType: int64
+		formatString: 0
+		lineageTag: 7a7e474c-19fa-517d-adb3-cb05be6c598d
+		summarizeBy: none
+		sourceColumn: rodada_alvo_replay
+
+		annotation SummarizationSetBy = User
+
+	column gerado_em
+		dataType: string
+		lineageTag: df81c6fc-a52b-5c73-b25f-25698b54502d
+		summarizeBy: none
+		sourceColumn: gerado_em
+
+		annotation SummarizationSetBy = User
+
+	partition info = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(PastaDados & "info.csv"), [Delimiter = ",", Columns = 12, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalho = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Nulos = Cabecalho,
+				    Tipos = Table.TransformColumnTypes(Nulos, {{"simulacoes", Int64.Type}, {"jogos_disputados", Int64.Type}, {"jogos_restantes", Int64.Type}, {"jogos_total", Int64.Type}, {"ultimo_jogo", type date}, {"pendentes_sem_data", Int64.Type}, {"incerteza", type number}, {"jogos_teste", Int64.Type}, {"cortes_replay", Int64.Type}, {"cortes_texto", type text}, {"rodada_alvo_replay", Int64.Type}, {"gerado_em", type text}}, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,349 @@
+/// Só medidas. Todo número do painel sai daqui.
+table _Medidas
+	lineageTag: fdcd932a-9a4a-599d-8f4e-91a0e06bd314
+
+	/// Jogos de 2026 já jogados.
+	measure 'Jogos disputados' = SUM ( info[jogos_disputados] )
+		formatString: #,0
+		displayFolder: KPI
+		lineageTag: fc15306d-3983-5fd0-9281-e8370b8ffa4d
+
+	/// Jogos que a simulação sorteia.
+	measure 'Jogos restantes' = SUM ( info[jogos_restantes] )
+		formatString: #,0
+		displayFolder: KPI
+		lineageTag: db2541e2-b93d-51cf-a314-6b28ec5465e6
+
+	/// Quantas vezes o fim do campeonato foi sorteado.
+	measure Simulações = SUM ( info[simulacoes] )
+		formatString: #,0
+		displayFolder: KPI
+		lineageTag: 7f234237-ef77-5bf1-a4ac-4da7e4b35349
+
+	/// Time com a maior chance de título.
+	measure 'Favorito ao título' = MAXX ( TOPN ( 1, ALL ( times ), times[p_titulo], DESC ), times[time] )
+		displayFolder: KPI
+		lineageTag: 92f42e5a-6aee-5be3-b9d6-f8ec9c038b32
+
+	/// Maior chance de título entre os times.
+	measure 'Chance do favorito' = MAXX ( ALL ( times ), times[p_titulo] )
+		formatString: 0.0%
+		displayFolder: KPI
+		lineageTag: 63499fc9-779c-5462-820c-01f326cdca00
+
+	/// Times com 1% ou mais de chance de terminar no Z4.
+	measure 'Times em risco de queda' = COUNTROWS ( FILTER ( ALL ( times ), times[p_z4] >= 0.01 ) )
+		formatString: 0
+		displayFolder: KPI
+		lineageTag: b55fa8cd-61ac-5e93-876f-9d70019c867e
+
+	/// Pontos até agora.
+	measure Pontos = SUM ( times[pontos_atuais] )
+		formatString: 0
+		displayFolder: Times
+		lineageTag: 8b5626fe-7f6f-5ec2-aea2-b217679d505b
+
+	/// Jogos disputados pelo time.
+	measure 'Jogos do time' = SUM ( times[jogos_disputados] )
+		formatString: 0
+		displayFolder: Times
+		lineageTag: 128ef1b8-fbc7-510c-bb6a-e512e78627ea
+
+	/// Média dos pontos finais nas simulações.
+	measure 'Pontos esperados' = SUM ( times[pontos_esperados] )
+		formatString: 0.0
+		displayFolder: Times
+		lineageTag: ff2f3a1d-6b18-54f6-8be4-d658bc2348c2
+
+	/// 5% das simulações terminam com menos pontos.
+	measure 'Pontos p5' = SUM ( times[pontos_p5] )
+		formatString: 0
+		displayFolder: Times
+		lineageTag: 73e0fc21-306f-5bb0-a761-35a464db56ae
+
+	/// 5% das simulações terminam com mais pontos.
+	measure 'Pontos p95' = SUM ( times[pontos_p95] )
+		formatString: 0
+		displayFolder: Times
+		lineageTag: ce33c315-dff4-5927-a2d8-72f3818936af
+
+	/// Pontos finais em 90% das simulações.
+	measure 'Faixa de 90%' = IF ( HASONEVALUE ( times[time_id] ), FORMAT ( [Pontos p5], "0" ) & " a " & FORMAT ( [Pontos p95], "0" ) )
+		displayFolder: Times
+		lineageTag: 628d322e-dc89-5552-a137-4d844e57fdd2
+
+	/// Média da posição final.
+	measure 'Posição esperada' = SUM ( times[posicao_esperada] )
+		formatString: 0.0
+		displayFolder: Times
+		lineageTag: dbb3bdc7-0b71-5b9a-b9fb-a03cf8e9b968
+
+	/// Posição na tabela de hoje.
+	measure 'Posição atual' = SUM ( times[posicao_atual] )
+		formatString: 0
+		displayFolder: Times
+		lineageTag: f0aab42f-c374-5216-9d23-f507444b2a1b
+
+	/// Posição na tabela final prevista (ordem dos pontos esperados).
+	measure 'Posição prevista' = SUM ( times[ordem_prevista] )
+		formatString: 0
+		displayFolder: Times
+		lineageTag: cd5aa507-cb49-5c69-b6c2-781baa964eae
+
+	/// Posições que o time sobe (positivo) ou desce (negativo) até o fim, pela previsão.
+	measure 'Variação prevista' = [Posição atual] - [Posição prevista]
+		formatString: +0;-0;0
+		displayFolder: Times
+		lineageTag: 45c03197-74e7-522c-b66d-d0868b8ee692
+
+	/// Posição de hoje com a seta do que muda até a tabela final prevista.
+	measure 'Texto hoje' = VAR v = [Variação prevista] RETURN IF ( HASONEVALUE ( times[time_id] ), FORMAT ( [Posição atual], "0" ) & "º" & SWITCH ( TRUE (), v > 0, "  ▲" & v, v < 0, "  ▼" & -v, "" ) )
+		displayFolder: Times
+		lineageTag: 45fdb92a-2393-5bba-864b-64f9c6984648
+
+	/// Primeiro pedaço da barra: pontos que o time já tem.
+	measure 'Barra pontos atuais' = [Pontos]
+		formatString: 0
+		displayFolder: Faixa
+		lineageTag: 99bbb636-4a83-50c8-9764-cfffee5b15a5
+
+	/// Pedaço sem cor, dos pontos atuais até o início da faixa.
+	measure 'Barra vão' = [Pontos p5] - [Pontos]
+		formatString: 0
+		displayFolder: Faixa
+		lineageTag: 901b38e5-6338-55f2-ae1f-9acc3a732935
+
+	/// Do início da faixa de 90% até os pontos esperados.
+	measure 'Barra até o esperado' = MAX ( 0, [Pontos esperados] - [Pontos p5] )
+		formatString: 0.0
+		displayFolder: Faixa
+		lineageTag: 0669ad70-2ede-5117-9137-b7c36bfaea5e
+
+	/// Dos pontos esperados até o fim da faixa de 90%.
+	measure 'Barra acima do esperado' = MAX ( 0, [Pontos p95] - [Pontos esperados] )
+		formatString: 0.0
+		displayFolder: Faixa
+		lineageTag: d9f37441-9890-5af1-942d-bf9cc44febb2
+
+	/// Probabilidade de terminar na posição.
+	measure 'Chance na posição' = SUM ( posicoes[probabilidade] )
+		formatString: 0.0%
+		displayFolder: Posições
+		lineageTag: c60885d5-34f9-54fd-bb07-da2c19325477
+
+	/// Chance na posição em texto, para o mapa de calor.
+	measure 'Texto da posição' = VAR p = [Chance na posição] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p = 0, BLANK (), p = 1, "100%", p >= 0.995, ">99%", p < 0.005, "<1%", FORMAT ( p, "0%" ) )
+		displayFolder: Posições
+		lineageTag: 071cde6f-2cb0-58b8-bc30-e996516c47bc
+
+	/// 1 se o jogo é do time escolhido no filtro (ou se não há time escolhido).
+	measure 'Jogo no filtro' = VAR t = SELECTEDVALUE ( times[time_id] ) RETURN IF ( ISBLANK ( t ) || SELECTEDVALUE ( jogos[mandante_id] ) = t || SELECTEDVALUE ( jogos[visitante_id] ) = t, 1 )
+		formatString: 0
+		displayFolder: Jogos
+		lineageTag: d4f69ac5-c4a6-5f4f-92b9-6d9c9f01aca7
+
+	/// Chance de vitória do mandante.
+	measure 'Mandante vence' = IF ( [Jogo no filtro] = 1, SUM ( jogos[p_mandante] ) )
+		formatString: 0%
+		displayFolder: Jogos
+		lineageTag: f240fedf-a2fd-533f-99fd-055e44566d07
+
+	/// Chance de empate.
+	measure Empate = IF ( [Jogo no filtro] = 1, SUM ( jogos[p_empate] ) )
+		formatString: 0%
+		displayFolder: Jogos
+		lineageTag: 32f38ca0-7dc1-566f-b903-c10e9aebec43
+
+	/// Chance de vitória do visitante.
+	measure 'Visitante vence' = IF ( [Jogo no filtro] = 1, SUM ( jogos[p_visitante] ) )
+		formatString: 0%
+		displayFolder: Jogos
+		lineageTag: b1e374ce-add3-5cae-a90e-193d1d79c83b
+
+	/// Jogos que aparecem na tabela com o filtro de time.
+	measure 'Jogos na lista' = SUMX ( VALUES ( jogos[id_jogo] ), [Jogo no filtro] )
+		formatString: 0
+		displayFolder: Jogos
+		lineageTag: 34a4cc08-f3cd-5d97-9899-6326107cee60
+
+	/// Título da tabela de jogos, com a contagem.
+	measure 'Título dos jogos' = IF ( ISFILTERED ( times[time] ) && HASONEVALUE ( times[time] ), FORMAT ( [Jogos na lista], "0" ) & " jogos que faltam para o " & SELECTEDVALUE ( times[time] ), FORMAT ( [Jogos na lista], "0" ) & " jogos que faltam" )
+		displayFolder: Jogos
+		lineageTag: f97020c7-f653-5b99-b132-be36c3e6e5e0
+
+	/// Erro de probabilidade jogo a jogo (menor é melhor).
+	measure RPS = SUM ( modelos[rps] )
+		formatString: 0.000
+		displayFolder: Teste
+		lineageTag: b6c9eb49-d859-51bd-93ec-a478b37b9d4c
+
+	/// Erro médio nos pontos finais de cada time, no replay da tabela.
+	measure 'Erro de pontos' = SUM ( modelos[erro_pontos] )
+		formatString: 0.0
+		displayFolder: Teste
+		lineageTag: 5a707801-f4ea-574c-83e3-17ff7cd2e3ab
+
+	/// Subtítulo do gráfico de RPS.
+	measure 'Subtítulo do RPS' = FORMAT ( SUM ( info[jogos_teste] ), "0" ) & " jogos de 2026 · menor é melhor · mercado só como referência"
+		displayFolder: Teste
+		lineageTag: a64525e9-3729-5f77-b97a-990bdd778fac
+
+	/// Subtítulo do gráfico de erro de pontos.
+	measure 'Subtítulo do replay' = "Previsto nas rodadas " & MAX ( info[cortes_texto] ) & " · real na " & FORMAT ( SUM ( info[rodada_alvo_replay] ), "0" ) & "ª rodada"
+		displayFolder: Teste
+		lineageTag: 083ac5ef-a337-5986-b3b7-df8d26b52eb6
+
+	/// Limão no modelo escolhido, lavanda no mercado.
+	measure 'Cor do modelo' = SWITCH ( SELECTEDVALUE ( modelos[papel] ), "escolhido", "#C6F500", "referencia", "#8A8FB8", "#5D4DFF" )
+		displayFolder: Cores
+		lineageTag: 7d8fd387-b9c9-519c-93c7-099d313d2aee
+
+	/// Verde se o time sobe até o fim, coral se desce, lavanda se fica.
+	measure 'Letra hoje' = VAR v = [Variação prevista] RETURN SWITCH ( TRUE (), v > 0, "#2EE06E", v < 0, "#FF5C7A", "#8A8FB8" )
+		displayFolder: Cores
+		lineageTag: af2c5959-edd2-5146-ad89-9f67fdd37038
+
+	/// Chance de terminar em Título.
+	measure 'Chance de título' = SUM ( times[p_titulo] )
+		formatString: 0.0%
+		displayFolder: Chances
+		lineageTag: 19adeb8f-261c-5191-ae44-bd210fbb6e95
+
+	/// Chance de título em texto, para a tabela.
+	measure 'Texto Título' = VAR p = [Chance de título] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p = 0, BLANK (), p = 1, "100%", p >= 0.9995, ">99,9%", p < 0.0005, "<0,1%", FORMAT ( p, "0.0%" ) )
+		displayFolder: Chances
+		lineageTag: fd248a60-9f02-5c86-95eb-648de8f6cee0
+
+	/// Cor de fundo pela chance.
+	measure 'Fundo Título' = VAR p = [Chance de título] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, BLANK (), p < 0.05, "#343F30", p < 0.25, "#516226", p < 0.5, "#76911A", p < 0.75, "#9ABE0E", "#BDEA03" )
+		displayFolder: Cores
+		lineageTag: bcee8ee2-5c15-5b76-b52e-e44337b94f77
+
+	/// Cor da letra pelo fundo.
+	measure 'Letra Título' = VAR p = [Chance de título] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, "#FFFFFF", p < 0.05, "#FFFFFF", p < 0.25, "#FFFFFF", p < 0.5, "#0B0D26", p < 0.75, "#0B0D26", "#0B0D26" )
+		displayFolder: Cores
+		lineageTag: d5169f6b-42e0-598d-b9c3-4808e12856d9
+
+	/// Chance de terminar em G4.
+	measure 'Chance de G4' = SUM ( times[p_g4] )
+		formatString: 0.0%
+		displayFolder: Chances
+		lineageTag: d5c212a4-2ae6-5016-8d78-b450520946dd
+
+	/// Chance de G4 em texto, para a tabela.
+	measure 'Texto G4' = VAR p = [Chance de G4] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p = 0, BLANK (), p = 1, "100%", p >= 0.9995, ">99,9%", p < 0.0005, "<0,1%", FORMAT ( p, "0.0%" ) )
+		displayFolder: Chances
+		lineageTag: 17f9e0f7-3920-5143-9d63-84583b92bbb5
+
+	/// Cor de fundo pela chance.
+	measure 'Fundo G4' = VAR p = [Chance de G4] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, BLANK (), p < 0.05, "#343F30", p < 0.25, "#516226", p < 0.5, "#76911A", p < 0.75, "#9ABE0E", "#BDEA03" )
+		displayFolder: Cores
+		lineageTag: 57d3a25d-414d-5381-96c1-01486bf81b3a
+
+	/// Cor da letra pelo fundo.
+	measure 'Letra G4' = VAR p = [Chance de G4] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, "#FFFFFF", p < 0.05, "#FFFFFF", p < 0.25, "#FFFFFF", p < 0.5, "#0B0D26", p < 0.75, "#0B0D26", "#0B0D26" )
+		displayFolder: Cores
+		lineageTag: f70bb028-cdb3-51d3-8f3d-8b22f1f926e8
+
+	/// Chance de terminar em G6.
+	measure 'Chance de G6' = SUM ( times[p_g6] )
+		formatString: 0.0%
+		displayFolder: Chances
+		lineageTag: 4d3c1311-ddad-5734-9ed5-1d2b9df70876
+
+	/// Chance de G6 em texto, para a tabela.
+	measure 'Texto G6' = VAR p = [Chance de G6] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p = 0, BLANK (), p = 1, "100%", p >= 0.9995, ">99,9%", p < 0.0005, "<0,1%", FORMAT ( p, "0.0%" ) )
+		displayFolder: Chances
+		lineageTag: c9b62076-42a4-53b2-b42b-80a81f5cd93a
+
+	/// Cor de fundo pela chance.
+	measure 'Fundo G6' = VAR p = [Chance de G6] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, BLANK (), p < 0.05, "#343F30", p < 0.25, "#516226", p < 0.5, "#76911A", p < 0.75, "#9ABE0E", "#BDEA03" )
+		displayFolder: Cores
+		lineageTag: 257854cf-485b-5844-8ee0-248971fc4acf
+
+	/// Cor da letra pelo fundo.
+	measure 'Letra G6' = VAR p = [Chance de G6] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, "#FFFFFF", p < 0.05, "#FFFFFF", p < 0.25, "#FFFFFF", p < 0.5, "#0B0D26", p < 0.75, "#0B0D26", "#0B0D26" )
+		displayFolder: Cores
+		lineageTag: d86d8412-5568-58d0-855e-51e7577ceced
+
+	/// Chance de terminar em Sul-Americana.
+	measure 'Chance de Sul-Americana' = SUM ( times[p_sul_americana] )
+		formatString: 0.0%
+		displayFolder: Chances
+		lineageTag: f21e1bba-63e0-54bc-af2b-d1ce41e3a114
+
+	/// Chance de Sul-Americana em texto, para a tabela.
+	measure 'Texto Sul-Americana' = VAR p = [Chance de Sul-Americana] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p = 0, BLANK (), p = 1, "100%", p >= 0.9995, ">99,9%", p < 0.0005, "<0,1%", FORMAT ( p, "0.0%" ) )
+		displayFolder: Chances
+		lineageTag: dbdfc686-f701-5970-975f-790daeb5d94b
+
+	/// Cor de fundo pela chance.
+	measure 'Fundo Sul-Americana' = VAR p = [Chance de Sul-Americana] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, BLANK (), p < 0.05, "#21215D", p < 0.25, "#2D297D", p < 0.5, "#3C35A6", p < 0.75, "#4B40CE", "#594AF5" )
+		displayFolder: Cores
+		lineageTag: be4f900f-5502-5807-adaa-3b5053150c9e
+
+	/// Cor da letra pelo fundo.
+	measure 'Letra Sul-Americana' = VAR p = [Chance de Sul-Americana] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, "#FFFFFF", p < 0.05, "#FFFFFF", p < 0.25, "#FFFFFF", p < 0.5, "#FFFFFF", p < 0.75, "#FFFFFF", "#FFFFFF" )
+		displayFolder: Cores
+		lineageTag: a7dad398-d672-53cf-a6d4-f75e522b1603
+
+	/// Chance de terminar em Z4.
+	measure 'Chance de Z4' = SUM ( times[p_z4] )
+		formatString: 0.0%
+		displayFolder: Chances
+		lineageTag: 81c7df1f-eb10-5426-8800-2e3f0ee8313a
+
+	/// Chance de Z4 em texto, para a tabela.
+	measure 'Texto Z4' = VAR p = [Chance de Z4] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p = 0, BLANK (), p = 1, "100%", p >= 0.9995, ">99,9%", p < 0.0005, "<0,1%", FORMAT ( p, "0.0%" ) )
+		displayFolder: Chances
+		lineageTag: 02d8c39f-99a8-51c8-825a-a9600f9c60a6
+
+	/// Cor de fundo pela chance.
+	measure 'Fundo Z4' = VAR p = [Chance de Z4] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, BLANK (), p < 0.05, "#3E2346", p < 0.25, "#642E50", p < 0.5, "#953D5D", p < 0.75, "#C44B6A", "#F35977" )
+		displayFolder: Cores
+		lineageTag: 9b4f7d56-32f2-5e91-8498-1e5f4e6a9821
+
+	/// Cor da letra pelo fundo.
+	measure 'Letra Z4' = VAR p = [Chance de Z4] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, "#FFFFFF", p < 0.05, "#FFFFFF", p < 0.25, "#FFFFFF", p < 0.5, "#FFFFFF", p < 0.75, "#FFFFFF", "#0B0D26" )
+		displayFolder: Cores
+		lineageTag: 469e06ca-87d8-5e06-ab4f-7d28afdb594c
+
+	/// Cor de fundo pela probabilidade (violeta, neutro: não é destaque de aposta).
+	measure 'Fundo Mandante vence' = VAR p = [Mandante vence] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, BLANK (), p < 0.05, "#21215D", p < 0.25, "#2D297D", p < 0.5, "#3C35A6", p < 0.75, "#4B40CE", "#594AF5" )
+		displayFolder: Cores
+		lineageTag: 7db379bf-a0cb-59a6-8ebd-3473d76c5728
+
+	/// Cor da letra pelo fundo.
+	measure 'Letra Mandante vence' = VAR p = [Mandante vence] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, "#FFFFFF", p < 0.05, "#FFFFFF", p < 0.25, "#FFFFFF", p < 0.5, "#FFFFFF", p < 0.75, "#FFFFFF", "#FFFFFF" )
+		displayFolder: Cores
+		lineageTag: 28c3fc69-a5f2-5092-8158-bc7935f41242
+
+	/// Cor de fundo pela probabilidade (violeta, neutro: não é destaque de aposta).
+	measure 'Fundo Empate' = VAR p = [Empate] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, BLANK (), p < 0.05, "#21215D", p < 0.25, "#2D297D", p < 0.5, "#3C35A6", p < 0.75, "#4B40CE", "#594AF5" )
+		displayFolder: Cores
+		lineageTag: a6c752f6-38bb-5649-b027-b87811966fd6
+
+	/// Cor da letra pelo fundo.
+	measure 'Letra Empate' = VAR p = [Empate] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, "#FFFFFF", p < 0.05, "#FFFFFF", p < 0.25, "#FFFFFF", p < 0.5, "#FFFFFF", p < 0.75, "#FFFFFF", "#FFFFFF" )
+		displayFolder: Cores
+		lineageTag: 1b09f892-dce3-5cef-9ccb-3d7bd8be913a
+
+	/// Cor de fundo pela probabilidade (violeta, neutro: não é destaque de aposta).
+	measure 'Fundo Visitante vence' = VAR p = [Visitante vence] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, BLANK (), p < 0.05, "#21215D", p < 0.25, "#2D297D", p < 0.5, "#3C35A6", p < 0.75, "#4B40CE", "#594AF5" )
+		displayFolder: Cores
+		lineageTag: 59e6ad3e-f050-5ec6-a4fe-e01090f2f302
+
+	/// Cor da letra pelo fundo.
+	measure 'Letra Visitante vence' = VAR p = [Visitante vence] RETURN SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, "#FFFFFF", p < 0.05, "#FFFFFF", p < 0.25, "#FFFFFF", p < 0.5, "#FFFFFF", p < 0.75, "#FFFFFF", "#FFFFFF" )
+		displayFolder: Cores
+		lineageTag: b2b740c9-63de-5663-89b9-fb6de8cacccb
+
+	/// Cor da célula: tom da zona da posição, intensidade da chance.
+	measure 'Fundo da posição' = VAR p = [Chance na posição] VAR z = SELECTEDVALUE ( posicoes[zona] ) RETURN SWITCH ( TRUE (), z = "Título", SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, BLANK (), p < 0.05, "#343F30", p < 0.25, "#516226", p < 0.5, "#76911A", p < 0.75, "#9ABE0E", "#BDEA03" ), z = "G4", SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, BLANK (), p < 0.05, "#343F30", p < 0.25, "#516226", p < 0.5, "#76911A", p < 0.75, "#9ABE0E", "#BDEA03" ), z = "G6", SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, BLANK (), p < 0.05, "#343F30", p < 0.25, "#516226", p < 0.5, "#76911A", p < 0.75, "#9ABE0E", "#BDEA03" ), z = "Sul-Americana", SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, BLANK (), p < 0.05, "#21215D", p < 0.25, "#2D297D", p < 0.5, "#3C35A6", p < 0.75, "#4B40CE", "#594AF5" ), z = "Meio", SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, BLANK (), p < 0.05, "#292D51", p < 0.25, "#3C4065", p < 0.5, "#55597F", p < 0.75, "#6C7198", "#8489B2" ), z = "Z4", SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, BLANK (), p < 0.05, "#3E2346", p < 0.25, "#642E50", p < 0.5, "#953D5D", p < 0.75, "#C44B6A", "#F35977" ) )
+		displayFolder: Cores
+		lineageTag: af669ab4-2153-5d7d-b374-f7f3da31e2ae
+
+	/// Cor da célula: tom da zona da posição, intensidade da chance.
+	measure 'Letra da posição' = VAR p = [Chance na posição] VAR z = SELECTEDVALUE ( posicoes[zona] ) RETURN SWITCH ( TRUE (), z = "Título", SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, "#FFFFFF", p < 0.05, "#FFFFFF", p < 0.25, "#FFFFFF", p < 0.5, "#0B0D26", p < 0.75, "#0B0D26", "#0B0D26" ), z = "G4", SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, "#FFFFFF", p < 0.05, "#FFFFFF", p < 0.25, "#FFFFFF", p < 0.5, "#0B0D26", p < 0.75, "#0B0D26", "#0B0D26" ), z = "G6", SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, "#FFFFFF", p < 0.05, "#FFFFFF", p < 0.25, "#FFFFFF", p < 0.5, "#0B0D26", p < 0.75, "#0B0D26", "#0B0D26" ), z = "Sul-Americana", SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, "#FFFFFF", p < 0.05, "#FFFFFF", p < 0.25, "#FFFFFF", p < 0.5, "#FFFFFF", p < 0.75, "#FFFFFF", "#FFFFFF" ), z = "Meio", SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, "#FFFFFF", p < 0.05, "#FFFFFF", p < 0.25, "#FFFFFF", p < 0.5, "#FFFFFF", p < 0.75, "#0B0D26", "#0B0D26" ), z = "Z4", SWITCH ( TRUE (), ISBLANK ( p ) || p < 0.001, "#FFFFFF", p < 0.05, "#FFFFFF", p < 0.25, "#FFFFFF", p < 0.5, "#FFFFFF", p < 0.75, "#FFFFFF", "#0B0D26" ) )
+		displayFolder: Cores
+		lineageTag: 5d8cbfd6-ad7f-5e87-8562-6758244d9ec3
